@@ -1,7 +1,7 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.dao.ProductDao;
-import com.es.phoneshop.dao.impl.ArrayListProductDao;
+import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
 import com.es.phoneshop.model.Product;
 
 import javax.servlet.ServletException;
@@ -25,7 +25,7 @@ public class ProductListPageServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
 
-        productDao = ArrayListProductDao.getInstance();
+        productDao = ArrayListProductDaoImpl.getInstance();
     }
 
     @Override

@@ -1,8 +1,7 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.dao.ProductDao;
-import com.es.phoneshop.dao.impl.ArrayListProductDao;
-import com.es.phoneshop.exception.ArrayListProductDaoException;
+import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,7 +17,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
 
-        productDao = ArrayListProductDao.getInstance();
+        productDao = ArrayListProductDaoImpl.getInstance();
     }
 
     @Override
@@ -27,11 +26,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         String stringId = uri.substring(uri.lastIndexOf("/") + 1);
         Long id = Long.parseLong(stringId);
 
-        try {
-            request.setAttribute("product", productDao.getProduct(id));
-            request.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(request, response);
-        } catch (ArrayListProductDaoException e){
-            request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
-        }
+        request.setAttribute("product", productDao.getProduct(id));
+        request.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(request, response);
     }
 }

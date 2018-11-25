@@ -17,7 +17,7 @@
 </head>
 <body class="product-list">
 <main>
-    <div>error 404: Product with code xxx not found</div>
+    <div>error 404: ${pageContext.exception.message}</div>
     <p>Go to:</p>
     <ul>
         <li>

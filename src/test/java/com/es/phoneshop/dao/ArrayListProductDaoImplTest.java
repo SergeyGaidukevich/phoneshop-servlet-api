@@ -1,6 +1,6 @@
 package com.es.phoneshop.dao;
 
-import com.es.phoneshop.dao.impl.ArrayListProductDao;
+import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
 import com.es.phoneshop.model.Product;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
-public class ArrayListProductDaoTest {
+public class ArrayListProductDaoImplTest {
     private static final String CODE = "sgs";
     private static final String DESCRIPTION = "Samsung";
     private static final int STOCK = 100;
@@ -26,7 +26,7 @@ public class ArrayListProductDaoTest {
     @Test
     public void testFindProductsWhenProductsAreValid() {
         List<Product> products = Collections.nCopies(2, createProduct());
-        productDao = new ArrayListProductDao(products);
+        productDao = new ArrayListProductDaoImpl(products);
 
         List<Product> result = productDao.findProducts();
 
@@ -38,7 +38,7 @@ public class ArrayListProductDaoTest {
     @Test
     public void testFindProductsWhenProductContainsNullPrice() {
         List<Product> products = Collections.singletonList(createProductWithNullPrice());
-        productDao = new ArrayListProductDao(products);
+        productDao = new ArrayListProductDaoImpl(products);
 
         List<Product> result = productDao.findProducts();
 
@@ -49,7 +49,7 @@ public class ArrayListProductDaoTest {
     @Test
     public void testFindProductsWhenProductContainsNotPositiveStock() {
         List<Product> products = Collections.singletonList(createProductWithNotPositiveStock());
-        productDao = new ArrayListProductDao(products);
+        productDao = new ArrayListProductDaoImpl(products);
 
         List<Product> result = productDao.findProducts();
 

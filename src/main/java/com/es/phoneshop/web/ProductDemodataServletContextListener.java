@@ -1,6 +1,6 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.dao.impl.ArrayListProductDao;
+import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
 import com.es.phoneshop.model.Product;
 
 import javax.servlet.ServletContextEvent;
@@ -16,7 +16,7 @@ public class ProductDemodataServletContextListener implements ServletContextList
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         String insertSampleData = servletContextEvent.getServletContext().getInitParameter(INSERT_SAMPLE_DATA);
         if (insertSampleData != null && Boolean.valueOf(insertSampleData)) {
-            ArrayListProductDao productDao = ArrayListProductDao.getInstance();
+            ArrayListProductDaoImpl productDao = ArrayListProductDaoImpl.getInstance();
             Currency usd = Currency.getInstance("USD");
 
             productDao.save(new Product("sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg"));
