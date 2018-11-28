@@ -28,7 +28,7 @@ public class ArrayListProductDaoImplTest {
         List<Product> products = Collections.nCopies(2, createProduct());
         productDao = new ArrayListProductDaoImpl(products);
 
-        List<Product> result = productDao.findProducts();
+        List<Product> result = productDao.findProducts("", "", "");
 
         assertNotNull(result);
         assertEquals(result.size(), 2);
@@ -40,7 +40,7 @@ public class ArrayListProductDaoImplTest {
         List<Product> products = Collections.singletonList(createProductWithNullPrice());
         productDao = new ArrayListProductDaoImpl(products);
 
-        List<Product> result = productDao.findProducts();
+        List<Product> result = productDao.findProducts("", "", "");
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -51,7 +51,7 @@ public class ArrayListProductDaoImplTest {
         List<Product> products = Collections.singletonList(createProductWithNotPositiveStock());
         productDao = new ArrayListProductDaoImpl(products);
 
-        List<Product> result = productDao.findProducts();
+        List<Product> result = productDao.findProducts("", "", "");
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

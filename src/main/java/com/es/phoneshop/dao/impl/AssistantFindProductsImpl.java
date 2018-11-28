@@ -1,24 +1,37 @@
 package com.es.phoneshop.dao.impl;
 
 import com.es.phoneshop.dao.AssistantFindProducts;
+import com.es.phoneshop.exception.ArrayListProductDaoException;
 import com.es.phoneshop.model.Product;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Collection;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AssistantFindProductsImpl implements AssistantFindProducts {
-    public static final String WORDS_SEPARATOR = "\\s";
+    private static final String WORDS_SEPARATOR = "\\s";
+    private static final String DESC = "desc";
+    private static final String ASC = "asc";
+
     private Map<String, Comparator<Product>> sortPropertyToComparatorMap;
 
-    public AssistantFindProductsImpl() {
+    private AssistantFindProductsImpl() {
         sortPropertyToComparatorMap = new HashMap<>();
-        String DESCRIPTION = SortingProperty.DESCRIPTION.toString().toLowerCase();
-        String PRICE = SortingProperty.PRICE.toString().toLowerCase();
+        String description = SortingProperty.DESCRIPTION.toString().toLowerCase();
+        String price = SortingProperty.PRICE.toString().toLowerCase();
 
-        sortPropertyToComparatorMap.put(DESCRIPTION, Comparator.comparing(Product::getDescription));
-        sortPropertyToComparatorMap.put(PRICE, Comparator.comparing(Product::getPrice));
+        sortPropertyToComparatorMap.put(description, Comparator.comparing(Product::getDescription));
+        sortPropertyToComparatorMap.put(price, Comparator.comparing(Product::getPrice));
+    }
+
+    static AssistantFindProducts getInstance(){
+        return new AssistantFindProductsImpl();
     }
 
     @Override
@@ -26,9 +39,14 @@ public class AssistantFindProductsImpl implements AssistantFindProducts {
         if (StringUtils.isNotBlank(sortingProperty) && StringUtils.isNotBlank(sortMode)) {
             Comparator<Product> comparator = sortPropertyToComparatorMap.get(sortingProperty);
 
-            if ("desc".equals(sortMode) && comparator != null) {
+            if (comparator == null){
+                throw new ArrayListProductDaoException("Sorting property failed");
+            } else if (DESC.equals(sortMode)) {
                 comparator = comparator.reversed();
+            } else if (!ASC.equals(sortMode)) {
+                throw new ArrayListProductDaoException("Sort mode failed");
             }
+
             queryProducts.sort(comparator);
         }
     }
@@ -45,7 +63,8 @@ public class AssistantFindProductsImpl implements AssistantFindProducts {
                     .filter(product -> doesProductDescriptionContainAnyWord(product.getDescription(), searchWords))
                     .collect(Collectors.toList());
 
-            return Stream.of(foundProductsBySearchText, foundProductsByWords)
+            return Stream
+                    .of(foundProductsBySearchText, foundProductsByWords)
                     .flatMap(Collection::stream)
                     .distinct()
                     .collect(Collectors.toList());
@@ -54,6 +73,7 @@ public class AssistantFindProductsImpl implements AssistantFindProducts {
     }
 
     private boolean doesProductDescriptionContainAnyWord(String description, String[] words) {
-        return Arrays.stream(words).anyMatch(word -> StringUtils.containsIgnoreCase(description, word));
+        return Arrays.stream(words)
+                .anyMatch(word -> StringUtils.containsIgnoreCase(description, word));
     }
 }

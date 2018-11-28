@@ -18,7 +18,7 @@
         Welcome to Expert-Soft training!
     </p>
     <form>
-        <input type="search" name="search" value="${param.search}" size="39">
+        <input type="search" name="search" value="${param.search}" size="39" placeholder="Input description phone">
         <input type="hidden" name="sortingProperty" value="${param.sortingProperty}">
         <input type="hidden" name="sortMode" value="${param.sortMode}">
         <button>Search</button>
@@ -28,12 +28,12 @@
         <tr>
             <td>Image</td>
             <td>Description
-                <a href="${pageContext.servletContext.contextPath}/products?sortingProperty=description&sortMode=asc&search=${param.search}">asc</a>
-                <a href="${pageContext.servletContext.contextPath}/products?sortingProperty=description&sortMode=desc&search=${param.search}">desc</a>
+                <a href="<c:url value="/products?sortingProperty=description&sortMode=asc&search=${param.search}"/>">asc</a>
+                <a href="<c:url value="/products?sortingProperty=description&sortMode=desc&search=${param.search}"/>">desc</a>
             </td>
             <td class="price">Price
-                <a href="${pageContext.servletContext.contextPath}/products?sortingProperty=price&sortMode=asc&search=${param.search}">asc</a>
-                <a href="${pageContext.servletContext.contextPath}/products?sortingProperty=price&sortMode=desc&search=${param.search}">desc</a>
+                <a href="<c:url value="/products?sortingProperty=price&sortMode=asc&search=${param.search}"/>">asc</a>
+                <a href="<c:url value="/products?sortingProperty=price&sortMode=desc&search=${param.search}"/>">desc</a>
             </td>
         </tr>
         </thead>
@@ -44,7 +44,7 @@
                          src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product.imageUrl}">
                 </td>
                 <td>
-                    <a href="${pageContext.servletContext.contextPath}/products/${product.id}">${product.description}</a>
+                    <a href="<c:url value="/products/${product.id}"/>">${product.description}</a>
                 </td>
                 <td class="price">
                     <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>

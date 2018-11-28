@@ -34,8 +34,4 @@
         <url-pattern>/products/*</url-pattern>
     </servlet-mapping>
 
-    <error-page>
-        <exception-type>com.es.phoneshop.exception.ArrayListProductDaoException</exception-type>
-        <location>/WEB-INF/pages/error.jsp</location>
-    </error-page>
 </web-app>

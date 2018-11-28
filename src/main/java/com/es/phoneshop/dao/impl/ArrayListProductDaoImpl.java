@@ -1,5 +1,6 @@
 package com.es.phoneshop.dao.impl;
 
+import com.es.phoneshop.dao.AssistantFindProducts;
 import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.exception.ArrayListProductDaoException;
 import com.es.phoneshop.model.Product;
@@ -13,17 +14,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ArrayListProductDaoImpl implements ProductDao {
-
     private static final Predicate<Product> NON_NULL_PRICE = product -> Objects.nonNull(product.getPrice());
     private static final Predicate<Product> STOCK_LEVEL_HIGHER_THAN_ZERO = product -> product.getStock() > 0;
-    private static final AssistantFindProductsImpl FIND_PRODUCTS_SERVICE = new AssistantFindProductsImpl();
 
     private final List<Product> products = new CopyOnWriteArrayList<>();
     private final AtomicLong currentId = new AtomicLong(1);
 
-    private static class InstanceHolder {
-        public static ArrayListProductDaoImpl instance = new ArrayListProductDaoImpl();
-    }
+    private AssistantFindProducts assistantFindProducts = AssistantFindProductsImpl.getInstance();
 
     private ArrayListProductDaoImpl() {
     }
@@ -40,25 +37,17 @@ public class ArrayListProductDaoImpl implements ProductDao {
     @Override
     public Product getProduct(Long id) {
         return products.stream()
-                .filter((p) -> p.getId().equals(id))
+                .filter(p -> p.getId().equals(id))
                 .findAny()
                 .orElseThrow(() -> new ArrayListProductDaoException(String.format("Product with code %d not found", id)));
     }
 
     @Override
-    public List<Product> getAllProducts(){
-        return products.stream()
-                .filter(NON_NULL_PRICE)
-                .filter(STOCK_LEVEL_HIGHER_THAN_ZERO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Product> findProducts(String textSearch, String sortingProperty, String sortMode) {
+    public List<Product> findProducts(String textSearch, String sortingProperty, String sortMode) throws ArrayListProductDaoException {
         List<Product> queryProducts = new ArrayList<>(getAllProducts());
 
-        queryProducts = FIND_PRODUCTS_SERVICE.findProductsByDescription(queryProducts, textSearch);
-        FIND_PRODUCTS_SERVICE.sortProducts(queryProducts, sortingProperty, sortMode);
+        queryProducts = assistantFindProducts.findProductsByDescription(queryProducts, textSearch);
+        assistantFindProducts.sortProducts(queryProducts, sortingProperty, sortMode);
 
         return queryProducts;
     }
@@ -66,11 +55,13 @@ public class ArrayListProductDaoImpl implements ProductDao {
     @Override
     public void save(Product savingProduct) {
         boolean isNotThereAlreadyProductInDao = products.stream()
-                .noneMatch(product -> product.equals(savingProduct));
+                .noneMatch(savingProduct::equals);
 
         if (isNotThereAlreadyProductInDao) {
             populateId(savingProduct);
             products.add(savingProduct);
+        } else {
+            throw new ArrayListProductDaoException("Such phone already exists");
         }
     }
 
@@ -82,4 +73,16 @@ public class ArrayListProductDaoImpl implements ProductDao {
     private void populateId(Product product) {
         product.setId(currentId.getAndIncrement());
     }
+
+    private static class InstanceHolder {
+        static ArrayListProductDaoImpl instance = new ArrayListProductDaoImpl();
+    }
+
+    private List<Product> getAllProducts() {
+        return products.stream()
+                .filter(NON_NULL_PRICE)
+                .filter(STOCK_LEVEL_HIGHER_THAN_ZERO)
+                .collect(Collectors.toList());
+    }
+
 }
