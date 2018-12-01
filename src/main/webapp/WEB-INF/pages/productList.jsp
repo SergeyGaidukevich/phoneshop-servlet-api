@@ -19,7 +19,7 @@
     </p>
     <form>
         <input type="search" name="search" value="${param.search}" size="39" placeholder="Input description phone">
-        <input type="hidden" name="sortingProperty" value="${param.sortingProperty}">
+        <input type="hidden" name="sortProperty" value="${param.sortProperty}">
         <input type="hidden" name="sortMode" value="${param.sortMode}">
         <button>Search</button>
     </form>
@@ -28,12 +28,12 @@
         <tr>
             <td>Image</td>
             <td>Description
-                <a href="<c:url value="/products?sortingProperty=description&sortMode=asc&search=${param.search}"/>">asc</a>
-                <a href="<c:url value="/products?sortingProperty=description&sortMode=desc&search=${param.search}"/>">desc</a>
+                <a href="<c:url value="/products?sortProperty=DESCRIPTION&sortMode=ASCENDING&search=${param.search}"/>">asc</a>
+                <a href="<c:url value="/products?sortProperty=DESCRIPTION&sortMode=DESCENDING&search=${param.search}"/>">desc</a>
             </td>
             <td class="price">Price
-                <a href="<c:url value="/products?sortingProperty=price&sortMode=asc&search=${param.search}"/>">asc</a>
-                <a href="<c:url value="/products?sortingProperty=price&sortMode=desc&search=${param.search}"/>">desc</a>
+                <a href="<c:url value="/products?sortProperty=PRICE&sortMode=ASCENDING&search=${param.search}"/>">asc</a>
+                <a href="<c:url value="/products?sortProperty=PRICE&sortMode=DESCENDING&search=${param.search}"/>">desc</a>
             </td>
         </tr>
         </thead>

@@ -1,11 +1,11 @@
 package com.es.phoneshop.dao;
 
 import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
+import com.es.phoneshop.dao.impl.SortMode;
+import com.es.phoneshop.dao.impl.SortProperty;
 import com.es.phoneshop.exception.ArrayListProductDaoException;
 import com.es.phoneshop.model.Product;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,21 +23,16 @@ public class ArrayListProductDaoImplTest {
     private static final BigDecimal PRICE = new BigDecimal(100);
     private static final Currency CURRENCY = Currency.getInstance("USD");
     private static final String DESCRIPTION_SAMSUNG_GALAXY = "Samsung Galaxy";
-    private static final String SORTING_PROPERTY_DESCRIPTION = "description";
-    private static final String SORTING_PROPERTY_PRICE = "price";
     private static final BigDecimal ANOTHER_PRICE = new BigDecimal(200);
-    private static final String SORT_MODE_ASC = "asc";
-    private static final String SORT_MODE_DESC = "desc";
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+
     private ProductDao productDao;
 
     @Test
-    public void testFindProductsWhenProductsAreValid() {
+    public void testGetAllWhenProductsAreValid() {
         List<Product> products = Collections.nCopies(2, createProduct());
         productDao = new ArrayListProductDaoImpl(products);
 
-        List<Product> result = productDao.findProducts("", "", "");
+        List<Product> result = productDao.getAll();
 
         assertNotNull(result);
         assertEquals(result.size(), 2);
@@ -45,22 +40,22 @@ public class ArrayListProductDaoImplTest {
     }
 
     @Test
-    public void testFindProductsWhenProductContainsNullPrice() {
+    public void testGetAllWhenProductContainsNullPrice() {
         List<Product> products = Collections.singletonList(createProductWithNullPrice());
         productDao = new ArrayListProductDaoImpl(products);
 
-        List<Product> result = productDao.findProducts("", "", "");
+        List<Product> result = productDao.getAll();
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
-    public void testFindProductsWhenProductContainsNotPositiveStock() {
+    public void testGetAllWhenProductContainsNotPositiveStock() {
         List<Product> products = Collections.singletonList(createProductWithNotPositiveStock());
         productDao = new ArrayListProductDaoImpl(products);
 
-        List<Product> result = productDao.findProducts("", "", "");
+        List<Product> result = productDao.getAll();
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -74,22 +69,7 @@ public class ArrayListProductDaoImplTest {
         Collections.addAll(products, createProduct(), createProductWithAnotherDescription());
         productDao = new ArrayListProductDaoImpl(products);
 
-        List<Product> result = productDao.findProducts(DESCRIPTION_SAMSUNG_GALAXY, "", "");
-
-        assertNotNull(result);
-        assertEquals(result.size(), 2);
-        assertEquals(expected, result);
-    }
-
-    @Test
-    public void testFindProductAndSortByDescriptionAndAsc() {
-        List<Product> expected = new ArrayList<>();
-        Collections.addAll(expected, createProduct(), createProductWithAnotherDescription());
-        List<Product> products = new ArrayList<>();
-        Collections.addAll(products, createProductWithAnotherDescription(), createProduct());
-        productDao = new ArrayListProductDaoImpl(products);
-
-        List<Product> result = productDao.findProducts("", SORTING_PROPERTY_DESCRIPTION, SORT_MODE_ASC);
+        List<Product> result = productDao.findProducts(DESCRIPTION_SAMSUNG_GALAXY);
 
         assertNotNull(result);
         assertEquals(result.size(), 2);
@@ -104,7 +84,7 @@ public class ArrayListProductDaoImplTest {
         Collections.addAll(products, createProduct(), createProductWithAnotherPrice());
         productDao = new ArrayListProductDaoImpl(products);
 
-        List<Product> result = productDao.findProducts("", SORTING_PROPERTY_PRICE, SORT_MODE_DESC);
+        List<Product> result = productDao.findProducts(SortProperty.PRICE, SortMode.DESCENDING);
 
         assertNotNull(result);
         assertEquals(result.size(), 2);
@@ -125,16 +105,12 @@ public class ArrayListProductDaoImplTest {
         assertEquals(expected, result);
     }
 
-    @Test
+    @Test(expected = ArrayListProductDaoException.class)
     public void testGetProductWithNotExistingProduct() {
         List<Product> products = Collections.nCopies(2, createProduct());
         productDao = new ArrayListProductDaoImpl(products);
 
-        expectedException.expect(ArrayListProductDaoException.class);
-        expectedException.expectMessage("Product with code 7 not found");
-
         productDao.getProduct(7L);
-        expectedException = ExpectedException.none();
     }
 
     @Test

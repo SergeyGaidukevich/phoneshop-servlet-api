@@ -1,5 +1,7 @@
 package com.es.phoneshop.dao;
 
+import com.es.phoneshop.dao.impl.SortMode;
+import com.es.phoneshop.dao.impl.SortProperty;
 import com.es.phoneshop.model.Product;
 
 import java.util.List;
@@ -7,7 +9,13 @@ import java.util.List;
 public interface ProductDao {
     Product getProduct(Long id);
 
-    List<Product> findProducts(String textSearch, String sortingProperty, String sortMode);
+    List<Product> getAll();
+
+    List<Product> findProducts(String textSearch);
+
+    List<Product> findProducts(SortProperty sortProperty, SortMode sortMode);
+
+    List<Product> findProducts(String textSearch, SortProperty sortProperty, SortMode sortMode);
 
     void save(Product product);
 

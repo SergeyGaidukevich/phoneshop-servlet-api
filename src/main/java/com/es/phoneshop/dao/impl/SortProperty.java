@@ -1,6 +1,6 @@
 package com.es.phoneshop.dao.impl;
 
-public enum SortingProperty {
+public enum SortProperty {
     DESCRIPTION,
-    PRICE;
+    PRICE
 }
