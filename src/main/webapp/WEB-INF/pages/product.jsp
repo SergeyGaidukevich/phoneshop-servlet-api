@@ -21,6 +21,7 @@
     <jsp:include page="header.jsp"/>
 </div>
 <main>
+    <p>${sessionScope.cart}</p>
     <table>
         <tr>
             <td>
@@ -31,13 +32,41 @@
             <td class="price">
                 <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
             </td>
+            <td>
+                <form method="post" action="${pageContext.servletContext.contextPath}/products/${product.id}">
+                    Quantity: <input name="quantity" value="${not empty param.quantity ? param.quantity : 1}"
+                                     class="number" title="enter order quantity">
+                    <button>Add</button>
+                    <c:if test="${not empty param.message}">
+                        <p class="success">${param.message}</p>
+                    </c:if>
+                    <c:if test="${not empty quantityError}">
+                        <p class="error">${quantityError}</p>
+                    </c:if>
+                </form>
+            </td>
         </tr>
     </table>
+    <div class="viewedProduct">
+        <strong>Recently viewed</strong>
+        <table>
+            <tr>
+                <c:forEach var="viewedProduct" items="${sessionScope.viewedProducts.viewedProducts}">
+                    <td>
+                        <p><img class="product-tile" src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${viewedProduct.imageUrl}"></p>
+                        <a href="${pageContext.servletContext.contextPath}/products/${viewedProduct.id}">${viewedProduct.description}</a>
+                        <p><fmt:formatNumber value="${viewedProduct.price}" type="currency" currencySymbol="${viewedProduct.currency.symbol}"/></p>
+                    </td>
+                </c:forEach>
+            </tr>
+        </table>
+    </div>
     <form>
         <input type="button" value="Back" onclick="history.back();"/>
     </form>
     <form>
-        <input type="button" value="To main page" onClick='location.href="${pageContext.servletContext.contextPath}/products"'>
+        <input type="button" value="To main page"
+               onClick='location.href="${pageContext.servletContext.contextPath}/products"'>
     </form>
 </main>
 <div>
