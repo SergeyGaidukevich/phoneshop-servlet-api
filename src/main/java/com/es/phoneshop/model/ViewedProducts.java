@@ -1,16 +1,17 @@
 package com.es.phoneshop.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 public class ViewedProducts {
-    private List<Product> viewedProducts = new ArrayList<>();
+    private static final int SIZE_OF_VIEWED_LIST = 3;
 
-    public List<Product> getViewedProducts() {
+    private CircularFifoQueue<Product> viewedProducts = new CircularFifoQueue<>(SIZE_OF_VIEWED_LIST);
+
+    public CircularFifoQueue<Product> getViewedProducts() {
         return viewedProducts;
     }
 
-    public void setViewedProducts(List<Product> viewedProducts) {
+    public void setViewedProducts(CircularFifoQueue<Product> viewedProducts) {
         this.viewedProducts = viewedProducts;
     }
 }
