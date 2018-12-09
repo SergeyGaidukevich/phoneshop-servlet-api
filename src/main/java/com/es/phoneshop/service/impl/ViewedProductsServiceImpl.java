@@ -20,6 +20,7 @@ public class ViewedProductsServiceImpl implements ViewedProductsService {
         products.removeIf(viewedProduct::equals);
         products.add(viewedProduct);
     }
+
     private static class InstanceHolder {
         static ViewedProductsServiceImpl instance = new ViewedProductsServiceImpl();
     }

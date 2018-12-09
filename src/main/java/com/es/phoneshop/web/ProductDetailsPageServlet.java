@@ -1,8 +1,8 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.dao.exception.ArrayListProductDaoException;
 import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
-import com.es.phoneshop.exception.ArrayListProductDaoException;
 import com.es.phoneshop.model.Cart;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.model.ViewedProducts;
@@ -49,7 +49,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
             HttpSession session = request.getSession();
             ViewedProducts viewedProducts = (ViewedProducts) session.getAttribute(VIEWED_PRODUCTS);
-            if (viewedProducts == null){
+            if (viewedProducts == null) {
                 viewedProducts = new ViewedProducts();
             }
             viewedProductsService.addProductsToViewed(viewedProducts, product);

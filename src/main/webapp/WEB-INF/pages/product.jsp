@@ -53,9 +53,12 @@
             <tr>
                 <c:forEach var="viewedProduct" items="${sessionScope.viewedProducts.viewedProducts}">
                     <td>
-                        <p><img class="product-tile" src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${viewedProduct.imageUrl}"></p>
+                        <p><img class="product-tile"
+                                src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${viewedProduct.imageUrl}">
+                        </p>
                         <a href="${pageContext.servletContext.contextPath}/products/${viewedProduct.id}">${viewedProduct.description}</a>
-                        <p><fmt:formatNumber value="${viewedProduct.price}" type="currency" currencySymbol="${viewedProduct.currency.symbol}"/></p>
+                        <p><fmt:formatNumber value="${viewedProduct.price}" type="currency"
+                                             currencySymbol="${viewedProduct.currency.symbol}"/></p>
                     </td>
                 </c:forEach>
             </tr>

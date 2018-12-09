@@ -18,6 +18,10 @@
         Welcome to Expert-Soft training!
     </p>
     <form>
+        <input type="button" value="Cart"
+               onClick='location.href="${pageContext.servletContext.contextPath}/cart"'>
+    </form>
+    <form>
         <input type="search" name="search" value="${param.search}" size="39" placeholder="Input description phone">
         <input type="hidden" name="sortProperty" value="${param.sortProperty}">
         <input type="hidden" name="sortMode" value="${param.sortMode}">
@@ -47,7 +51,8 @@
                     <a href="<c:url value="/products/${product.id}"/>">${product.description}</a>
                 </td>
                 <td class="price">
-                    <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
+                    <fmt:formatNumber value="${product.price}" type="currency"
+                                      currencySymbol="${product.currency.symbol}"/>
                 </td>
             </tr>
         </c:forEach>
