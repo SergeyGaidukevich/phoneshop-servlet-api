@@ -24,7 +24,7 @@ public class FindProductsImplAssistant implements FindProductsAssistant {
         propertyComparators.put(SortProperty.PRICE, Comparator.comparing(Product::getPrice));
     }
 
-    public static FindProductsAssistant getInstance(){
+    public static FindProductsAssistant getInstance() {
         return new FindProductsImplAssistant();
     }
 

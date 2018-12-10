@@ -1,22 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+
 
 <jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
-<html>
-<head>
-    <title>Product List</title>
-    <link href='http://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/styles/main.css">
-</head>
-<body class="product-list">
-<div>
-    <jsp:include page="header.jsp"/>
-</div>
-<main>
+<tags:master pageTitle="Product List">
     <p>
         Welcome to Expert-Soft training!
     </p>
+    <form>
+        <input type="button" value="Cart"
+               onClick='location.href="${pageContext.servletContext.contextPath}/cart"'>
+    </form>
     <form>
         <input type="search" name="search" value="${param.search}" size="39" placeholder="Input description phone">
         <input type="hidden" name="sortProperty" value="${param.sortProperty}">
@@ -47,14 +43,10 @@
                     <a href="<c:url value="/products/${product.id}"/>">${product.description}</a>
                 </td>
                 <td class="price">
-                    <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
+                    <fmt:formatNumber value="${product.price}" type="currency"
+                                      currencySymbol="${product.currency.symbol}"/>
                 </td>
             </tr>
         </c:forEach>
     </table>
-</main>
-<div>
-    <jsp:include page="footer.jsp"/>
-</div>
-</body>
-</html>
+</tags:master>

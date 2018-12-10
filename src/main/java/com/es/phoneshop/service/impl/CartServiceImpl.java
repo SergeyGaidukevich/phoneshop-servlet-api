@@ -5,6 +5,7 @@ import com.es.phoneshop.model.CartItem;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.service.CartService;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class CartServiceImpl implements CartService {
@@ -16,18 +17,17 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void addProductToCart(Cart cart, Product product, int quantity) throws IllegalArgumentException{
+    public void addProductToCart(Cart cart, Product product, int quantity) {
         int currentStock = product.getStock();
-        if (currentStock < quantity){
-            throw  new IllegalArgumentException();
+        if (currentStock < quantity) {
+            throw new IllegalArgumentException();
         }
 
         Optional<CartItem> cartItemOptional = findProductInCart(product, cart);
-
         if (cartItemOptional.isPresent()) {
             CartItem cartItem = cartItemOptional.get();
             int orderedQuantity = cartItem.getQuantity() + quantity;
-            if(currentStock < orderedQuantity){
+            if (currentStock < orderedQuantity) {
                 throw new IllegalArgumentException();
             } else {
                 cartItem.setQuantity(orderedQuantity);
@@ -37,7 +37,28 @@ public class CartServiceImpl implements CartService {
         }
     }
 
-    private Optional<CartItem> findProductInCart(Product product, Cart cart){
+    @Override
+    public void updateCart(Cart cart, Product product, int quantity) {
+        int currentStock = product.getStock();
+        if (currentStock < quantity) {
+            throw new IllegalArgumentException();
+        }
+
+        Optional<CartItem> cartItemOptional = findProductInCart(product, cart);
+        if (cartItemOptional.isPresent()) {
+            CartItem cartItem = cartItemOptional.get();
+            cartItem.setQuantity(quantity);
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
+    @Override
+    public void deleteCartItem(Cart cart, Product product) {
+        cart.getCartItems().removeIf(cartItem -> product.equals(cartItem.getProduct()));
+    }
+
+    private Optional<CartItem> findProductInCart(Product product, Cart cart) {
         return cart.getCartItems().stream()
                 .filter(cartItem -> product.getId().equals(cartItem.getProduct().getId()))
                 .findAny();

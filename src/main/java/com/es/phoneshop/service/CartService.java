@@ -5,4 +5,8 @@ import com.es.phoneshop.model.Product;
 
 public interface CartService {
     void addProductToCart(Cart cart, Product product, int quantity);
+
+    void updateCart(Cart cart, Product product, int quantity);
+
+    void deleteCartItem(Cart cart, Product product);
 }

@@ -15,6 +15,7 @@
         <jstl.version>1.2</jstl.version>
         <jsp.version>2.3.1</jsp.version>
         <servlet.version>3.1.0</servlet.version>
+        <commons.collections.version>4.1</commons.collections.version>
     </properties>
 
     <dependencies>
@@ -52,7 +53,11 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons.lang.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons.collections.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>phoneshop-servlet-api</finalName>

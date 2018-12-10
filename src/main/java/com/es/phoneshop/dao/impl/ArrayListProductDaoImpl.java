@@ -2,7 +2,8 @@ package com.es.phoneshop.dao.impl;
 
 import com.es.phoneshop.dao.FindProductsAssistant;
 import com.es.phoneshop.dao.ProductDao;
-import com.es.phoneshop.exception.ArrayListProductDaoException;
+import com.es.phoneshop.dao.exception.GetProductException;
+import com.es.phoneshop.dao.exception.SaveProductException;
 import com.es.phoneshop.model.Product;
 
 import java.util.List;
@@ -33,16 +34,12 @@ public class ArrayListProductDaoImpl implements ProductDao {
         return InstanceHolder.instance;
     }
 
-    private static class InstanceHolder {
-        static ArrayListProductDaoImpl instance = new ArrayListProductDaoImpl();
-    }
-
     @Override
     public Product getProduct(Long id) {
         return products.stream()
                 .filter(p -> p.getId().equals(id))
                 .findAny()
-                .orElseThrow(() -> new ArrayListProductDaoException(String.format("Product with code %d not found", id)));
+                .orElseThrow(() -> new GetProductException(String.format("Product with code %d not found", id)));
     }
 
     @Override
@@ -59,7 +56,7 @@ public class ArrayListProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<Product> findProducts(SortProperty sortProperty, SortMode sortMode){
+    public List<Product> findProducts(SortProperty sortProperty, SortMode sortMode) {
         List<Product> queryProducts = getAll();
         findProductsAssistant.sortProducts(queryProducts, sortProperty, sortMode);
 
@@ -80,7 +77,7 @@ public class ArrayListProductDaoImpl implements ProductDao {
             populateId(savingProduct);
             products.add(savingProduct);
         } else {
-            throw new ArrayListProductDaoException("Such phone already exists");
+            throw new SaveProductException("Such phone already exists");
         }
     }
 
@@ -95,5 +92,9 @@ public class ArrayListProductDaoImpl implements ProductDao {
 
     private void populateId(Product product) {
         product.setId(currentId.getAndIncrement());
+    }
+
+    private static class InstanceHolder {
+        static ArrayListProductDaoImpl instance = new ArrayListProductDaoImpl();
     }
 }
