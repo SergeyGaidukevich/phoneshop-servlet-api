@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class CartPageServlet extends HttpServlet {
     private static final String CART_JSP = "/WEB-INF/pages/cart.jsp";
@@ -26,6 +27,7 @@ public class CartPageServlet extends HttpServlet {
     private static final String NOT_ENOUGH_QUANTITY_IN_STOCK = "Not enough quantity in stock";
     private static final String NOT_A_NUMBER = "Not a number";
     private static final String MESSAGE_CART_UPDATE_SUCCESSFULLY = "?message=cart update successfully";
+    private static final String PRODUCT_NO_FOUND_IN_CART_RELOAD_PAGE = "Product no found in Cart, reload page!";
 
     private ProductDao productDao;
     private CartService cartService;
@@ -40,6 +42,14 @@ public class CartPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Cart cart = (Cart) session.getAttribute(CART);
+
+        if (cart == null) {
+            cart = new Cart();
+            session.setAttribute(CART, cart);
+        }
+
         request.getRequestDispatcher(CART_JSP).forward(request, response);
     }
 
@@ -60,6 +70,8 @@ public class CartPageServlet extends HttpServlet {
                     cartService.updateCart(cart, product, quantity);
                 } catch (IllegalArgumentException e) {
                     quantityErrors.put(productId, NOT_ENOUGH_QUANTITY_IN_STOCK);
+                } catch (NoSuchElementException e) {
+                    quantityErrors.put(productId, PRODUCT_NO_FOUND_IN_CART_RELOAD_PAGE);
                 }
             } catch (NumberFormatException e) {
                 quantityErrors.put(productId, NOT_A_NUMBER);
