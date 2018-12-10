@@ -5,6 +5,7 @@ import com.es.phoneshop.model.CartItem;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.service.CartService;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class CartServiceImpl implements CartService {
@@ -47,6 +48,8 @@ public class CartServiceImpl implements CartService {
         if (cartItemOptional.isPresent()) {
             CartItem cartItem = cartItemOptional.get();
             cartItem.setQuantity(quantity);
+        } else {
+            throw new NoSuchElementException();
         }
     }
 
