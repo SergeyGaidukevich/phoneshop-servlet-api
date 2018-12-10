@@ -47,7 +47,6 @@ public class CartPageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         Cart cart = (Cart) session.getAttribute(CART);
-
         String[] quantities = request.getParameterValues(QUANTITY);
         String[] productIds = request.getParameterValues(PRODUCT_ID);
         Map<Long, String> quantityErrors = new HashMap<>();
@@ -70,12 +69,10 @@ public class CartPageServlet extends HttpServlet {
         }
 
         request.setAttribute(QUANTITY_ERRORS, quantityErrors);
-
         if (quantityErrors.isEmpty()) {
             response.sendRedirect(request.getRequestURI() + MESSAGE_CART_UPDATE_SUCCESSFULLY);
         } else {
             request.getRequestDispatcher(CART_JSP).forward(request, response);
         }
-
     }
 }

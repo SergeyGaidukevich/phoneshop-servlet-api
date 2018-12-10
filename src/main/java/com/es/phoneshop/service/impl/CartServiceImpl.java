@@ -23,7 +23,6 @@ public class CartServiceImpl implements CartService {
         }
 
         Optional<CartItem> cartItemOptional = findProductInCart(product, cart);
-
         if (cartItemOptional.isPresent()) {
             CartItem cartItem = cartItemOptional.get();
             int orderedQuantity = cartItem.getQuantity() + quantity;
@@ -45,7 +44,6 @@ public class CartServiceImpl implements CartService {
         }
 
         Optional<CartItem> cartItemOptional = findProductInCart(product, cart);
-
         if (cartItemOptional.isPresent()) {
             CartItem cartItem = cartItemOptional.get();
             cartItem.setQuantity(quantity);

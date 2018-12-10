@@ -74,7 +74,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
         Long id = getProductId(request);
         try {
             Product product = productDao.getProduct(id);
-
             request.setAttribute(PRODUCT, product);
 
             boolean isErrorInStockCount = true;
