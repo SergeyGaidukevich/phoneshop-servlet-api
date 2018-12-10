@@ -19,7 +19,7 @@
                     Price: <fmt:formatNumber value="${product.price}" type="currency"
                                              currencySymbol="${product.currency.symbol}"/>
                 </p>
-                <form method="post" action="${pageContext.servletContext.contextPath}/products/${product.id}">
+                <form method="post" action="<c:url value="/products/${product.id}"/>">
                     Quantity: <input name="quantity" value="${not empty param.quantity ? param.quantity : 1}"
                                      class="number" title="enter order quantity">
                     <button>Add</button>
@@ -42,7 +42,7 @@
                         <p><img class="product-tile"
                                 src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${viewedProduct.imageUrl}">
                         </p>
-                        <a href="${pageContext.servletContext.contextPath}/products/${viewedProduct.id}">${viewedProduct.description}</a>
+                        <a href="<c:url value="/products/${viewedProduct.id}"/>">${viewedProduct.description}</a>
                         <p><fmt:formatNumber value="${viewedProduct.price}" type="currency"
                                              currencySymbol="${viewedProduct.currency.symbol}"/></p>
                     </td>

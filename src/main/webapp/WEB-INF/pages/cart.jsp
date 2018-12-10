@@ -6,7 +6,7 @@
 <jsp:useBean id="cart" type="com.es.phoneshop.model.Cart" scope="session"/>
 <tags:master pageTitle="Cart">
     <h1>Your Cart:</h1>
-    <form method="post" action="${pageContext.servletContext.contextPath}/cart">
+    <form method="post" action="<c:url value="/cart"/>">
         <button>Update cart</button>
         <c:if test="${not empty quantityErrors}">
             <p class="error">Failed to update</p>
@@ -46,7 +46,7 @@
                         </c:if>
                     </td>
                     <td>
-                        <button formaction="${pageContext.servletContext.contextPath}/cart/delete/${item.product.id}">
+                        <button formaction="<c:url value="/cart/delete/${item.product.id}"/>">
                             Delete
                         </button>
                     </td>
