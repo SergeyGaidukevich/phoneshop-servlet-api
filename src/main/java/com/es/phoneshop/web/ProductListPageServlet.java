@@ -42,7 +42,6 @@ public class ProductListPageServlet extends HttpServlet {
         boolean sorting = sortProperty != null && sortMode != null;
         try {
             List<Product> products;
-
             if (sorting) {
                 if (StringUtils.isNotBlank(textSearch)) {
                     products = productDao.findProducts(textSearch, sortProperty, sortMode);
