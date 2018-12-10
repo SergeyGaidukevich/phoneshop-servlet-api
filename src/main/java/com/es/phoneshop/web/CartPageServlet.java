@@ -1,6 +1,7 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.dao.exception.ArrayListProductDaoException;
 import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
 import com.es.phoneshop.model.Cart;
 import com.es.phoneshop.model.Product;
@@ -53,9 +54,8 @@ public class CartPageServlet extends HttpServlet {
 
         for (int i = 0; i < productIds.length; i++) {
             Long productId = Long.valueOf(productIds[i]);
-            Product product = productDao.getProduct(productId);
-
             try {
+                Product product = productDao.getProduct(productId);
                 int quantity = Integer.valueOf(quantities[i]);
                 try {
                     cartService.updateCart(cart, product, quantity);
@@ -64,6 +64,8 @@ public class CartPageServlet extends HttpServlet {
                 }
             } catch (NumberFormatException e) {
                 quantityErrors.put(productId, NOT_A_NUMBER);
+            } catch (ArrayListProductDaoException e) {
+                response.sendError(404, e.getMessage());
             }
         }
 
