@@ -1,14 +1,14 @@
 package com.es.phoneshop.dao.exception;
 
 public class ArrayListProductDaoException extends RuntimeException {
-    public ArrayListProductDaoException() {
+    ArrayListProductDaoException() {
     }
 
-    public ArrayListProductDaoException(Throwable e) {
+    ArrayListProductDaoException(Throwable e) {
         super(e);
     }
 
-    public ArrayListProductDaoException(String s) {
+    ArrayListProductDaoException(String s) {
         super(s);
     }
 }
