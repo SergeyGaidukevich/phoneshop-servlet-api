@@ -4,17 +4,8 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="cart" type="com.es.phoneshop.model.Cart" scope="session"/>
-<html>
-<head>
-    <title>Product List</title>
-    <link href='http://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/styles/main.css">
-</head>
-<body>
-<div>
-    <jsp:include page="header.jsp"/>
-</div>
-<main>
+<tags:master pageTitle="Cart">
+    <h1>Your Cart:</h1>
     <form method="post" action="${pageContext.servletContext.contextPath}/cart">
         <button>Update cart</button>
         <c:if test="${not empty quantityErrors}">
@@ -70,9 +61,4 @@
             <p class="success">${param.message}</p>
         </c:if>
     </form>
-</main>
-<div>
-    <jsp:include page="footer.jsp"/>
-</div>
-</body>
-</html>
+</tags:master>
