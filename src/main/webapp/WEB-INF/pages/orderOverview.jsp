@@ -39,7 +39,7 @@
                 <td></td>
                 <td></td>
                 <td>Total: <fmt:formatNumber value="${order.totalPrice}" type="currency"
-                                      currencySymbol="USD"/>
+                                             currencySymbol="USD"/>
                 </td>
             </c:if>
         </tr>

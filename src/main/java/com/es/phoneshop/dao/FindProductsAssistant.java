@@ -1,7 +1,7 @@
 package com.es.phoneshop.dao;
 
-import com.es.phoneshop.dao.impl.SortMode;
-import com.es.phoneshop.dao.impl.SortProperty;
+import com.es.phoneshop.dao.sortParameters.SortMode;
+import com.es.phoneshop.dao.sortParameters.SortProperty;
 import com.es.phoneshop.model.Product;
 
 import java.util.List;

@@ -1,6 +1,5 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.dao.impl.ArrayListOrderDaoImpl;
 import com.es.phoneshop.model.Cart;
 import com.es.phoneshop.model.Order;
 import com.es.phoneshop.service.CartService;
@@ -51,7 +50,7 @@ public class CheckoutPageServlet extends HttpServlet {
             Order order = orderService.placeOrder(cart, name, deliveryAddress, phone);
             cartService.clearCart(cart);
             response.sendRedirect(request.getContextPath() + ORDER_OVERVIEW + order.getId());
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             request.setAttribute("errorMessage", "Field is not valid");
             request.getRequestDispatcher(CHECKOUT_JSP).forward(request, response);
         }
