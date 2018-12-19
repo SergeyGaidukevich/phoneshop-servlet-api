@@ -23,6 +23,24 @@
         <span>Cart: ${cart.totalPrice}</span>
     </a>
     <jsp:doBody/>
+    <div class="viewedProduct">
+        <strong>Popular viewed</strong>
+        <table>
+            <tr>
+                <c:forEach var="popularProduct" items="${applicationScope.popularProducts.popularProducts}">
+
+                    <td>
+                        <p><img class="product-tile"
+                                src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${popularProduct.imageUrl}">
+                        </p>
+                        <a href="<c:url value="/products/${popularProduct.id}"/>">${popularProduct.description}</a>
+                        <p><fmt:formatNumber value="${popularProduct.price}" type="currency"
+                                             currencySymbol="${popularProduct.currency.symbol}"/></p>
+                    </td>
+                </c:forEach>
+            </tr>
+        </table>
+    </div>
 </main>
 <div>
     <footer style="padding: 10px; background: aquamarine">

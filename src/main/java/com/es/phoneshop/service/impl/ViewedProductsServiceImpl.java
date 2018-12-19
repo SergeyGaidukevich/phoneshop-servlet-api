@@ -19,6 +19,8 @@ public class ViewedProductsServiceImpl implements ViewedProductsService {
         CircularFifoQueue<Product> products = viewedProducts.getViewedProducts();
         products.removeIf(viewedProduct::equals);
         products.add(viewedProduct);
+
+
     }
 
     private static class InstanceHolder {

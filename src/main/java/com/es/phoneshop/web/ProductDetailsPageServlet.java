@@ -4,19 +4,24 @@ import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.dao.exception.ArrayListProductDaoException;
 import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
 import com.es.phoneshop.model.Cart;
+import com.es.phoneshop.model.MostPopularProducts;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.model.ViewedProducts;
 import com.es.phoneshop.service.CartService;
+import com.es.phoneshop.service.MostPopularService;
 import com.es.phoneshop.service.ViewedProductsService;
 import com.es.phoneshop.service.impl.CartServiceImpl;
+import com.es.phoneshop.service.impl.MostPopularServiceImpl;
 import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Map;
 
 public class ProductDetailsPageServlet extends HttpServlet {
 
@@ -26,10 +31,12 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private final static String PRODUCT = "product";
     private static final String QUANTITY_ERROR = "quantityError";
     private static final String VIEWED_PRODUCTS = "viewedProducts";
+    private static final String POPULAR_PRODUCTS = "popularProducts";
 
     private ProductDao productDao;
     private CartService cartService;
     private ViewedProductsService viewedProductsService;
+    private MostPopularService popularProductService;
 
     @Override
     public void init() throws ServletException {
@@ -38,6 +45,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         productDao = ArrayListProductDaoImpl.getInstance();
         cartService = CartServiceImpl.getInstance();
         viewedProductsService = ViewedProductsServiceImpl.getInstance();
+        popularProductService = MostPopularServiceImpl.getInstance();
     }
 
     @Override
@@ -54,6 +62,15 @@ public class ProductDetailsPageServlet extends HttpServlet {
             }
             viewedProductsService.addProductsToViewed(viewedProducts, product);
             session.setAttribute(VIEWED_PRODUCTS, viewedProducts);
+
+            MostPopularProducts popularProducts = (MostPopularProducts) session.getAttribute(POPULAR_PRODUCTS);
+            if (popularProducts == null) {
+                popularProducts = new MostPopularProducts();
+            }
+            popularProductService.addProductsToPopular(popularProducts, product);
+            popularProductService.sortPopularProducts(popularProducts.getPopularProducts());
+            ServletContext servletContext = getServletConfig().getServletContext();
+            servletContext.setAttribute(POPULAR_PRODUCTS, popularProducts);
 
             request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);
         } catch (ArrayListProductDaoException e) {

@@ -14,4 +14,6 @@ public class ViewedProducts {
     public void setViewedProducts(CircularFifoQueue<Product> viewedProducts) {
         this.viewedProducts = viewedProducts;
     }
+
+
 }
