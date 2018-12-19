@@ -1,4 +1,4 @@
-package com.es.phoneshop.dao.impl;
+package com.es.phoneshop.dao.sortParameters;
 
 public enum SortProperty {
     DESCRIPTION,

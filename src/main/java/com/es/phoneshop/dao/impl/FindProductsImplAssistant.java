@@ -1,6 +1,8 @@
 package com.es.phoneshop.dao.impl;
 
 import com.es.phoneshop.dao.FindProductsAssistant;
+import com.es.phoneshop.dao.sortParameters.SortMode;
+import com.es.phoneshop.dao.sortParameters.SortProperty;
 import com.es.phoneshop.model.Product;
 import org.apache.commons.lang3.StringUtils;
 

@@ -3,8 +3,8 @@ package com.es.phoneshop.web;
 import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.dao.exception.ArrayListProductDaoException;
 import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
-import com.es.phoneshop.dao.impl.SortMode;
-import com.es.phoneshop.dao.impl.SortProperty;
+import com.es.phoneshop.dao.sortParameters.SortMode;
+import com.es.phoneshop.dao.sortParameters.SortProperty;
 import com.es.phoneshop.model.Product;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,14 +55,14 @@ public class ProductListPageServlet extends HttpServlet {
             }
 
             request.setAttribute(PRODUCTS_ATTRIBUTE, products);
-            forwardTo(request, response, PRODUCTS_JSP);
+            forwardTo(request, response);
         } catch (ArrayListProductDaoException e) {
             response.sendError(404, e.getMessage());
         }
     }
 
-    private void forwardTo(HttpServletRequest request, HttpServletResponse response, String path)
+    private void forwardTo(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher(path).forward(request, response);
+        request.getRequestDispatcher(ProductListPageServlet.PRODUCTS_JSP).forward(request, response);
     }
 }

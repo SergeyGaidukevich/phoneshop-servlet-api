@@ -5,6 +5,7 @@ import com.es.phoneshop.model.CartItem;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.service.CartService;
 
+import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -35,6 +36,7 @@ public class CartServiceImpl implements CartService {
         } else {
             cart.getCartItems().add(new CartItem(product, quantity));
         }
+        calculateTotalPrice(cart);
     }
 
     @Override
@@ -51,17 +53,33 @@ public class CartServiceImpl implements CartService {
         } else {
             throw new NoSuchElementException();
         }
+        calculateTotalPrice(cart);
     }
 
     @Override
     public void deleteCartItem(Cart cart, Product product) {
         cart.getCartItems().removeIf(cartItem -> product.equals(cartItem.getProduct()));
+        calculateTotalPrice(cart);
     }
+
+    @Override
+    public void clearCart(Cart cart) {
+        cart.getCartItems().clear();
+        calculateTotalPrice(cart);
+    }
+
 
     private Optional<CartItem> findProductInCart(Product product, Cart cart) {
         return cart.getCartItems().stream()
                 .filter(cartItem -> product.getId().equals(cartItem.getProduct().getId()))
                 .findAny();
+    }
+
+    private void calculateTotalPrice(Cart cart) {
+        BigDecimal totalPrice = cart.getCartItems().stream()
+                .map(cartItem -> cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        cart.setTotalPrice(totalPrice);
     }
 
     private static class InstanceHolder {

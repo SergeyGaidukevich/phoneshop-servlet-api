@@ -4,10 +4,11 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="cart" type="com.es.phoneshop.model.Cart" scope="session"/>
-<tags:master pageTitle="Cart">
+<tags:master pageTitle="Checkout">
     <h1>Your Cart:</h1>
-    <form method="post" action="<c:url value="/cart"/>">
-        <button>Update cart</button>
+    <form method="post" action="<c:url value="/checkout"/>">
+        <button>Place order</button>
+        <br>
         <c:if test="${not empty quantityErrors}">
             <p class="error">Failed to update</p>
         </c:if>
@@ -37,34 +38,29 @@
                                           currencySymbol="${item.product.currency.symbol}"/>
                     </td>
                     <td>
-                        <input name="quantity"
-                               value="${not empty quantityErrors[item.product.id] ? paramValues['quantity'][status.index] : item.quantity}"
-                               class="number">
-                        <input type="hidden" name="productId" value="${item.product.id}">
-                        <c:if test="${not empty quantityErrors[item.product.id]}">
-                            <p class="error">${quantityErrors[item.product.id]}</p>
-                        </c:if>
-                    </td>
-                    <td>
-                        <button formaction="<c:url value="/cart/delete/${item.product.id}"/>">
-                            Delete
-                        </button>
+                        <p class="price">${item.quantity}</p>
                     </td>
                 </tr>
             </c:forEach>
             <tr>
-                <td></td>
-                <td>Total:</td>
-                <td>${cart.totalPrice}</td>
+                <c:if test="${not empty cart}">
+                    <td></td>
+                    <td>Total:</td>
+                    <td><fmt:formatNumber value="${cart.totalPrice}" type="currency"
+                                          currencySymbol="USD"/>
+                    </td>
+                </c:if>
             </tr>
         </table>
-        <button>Update cart</button>
-        <c:if test="${not empty quantityErrors}">
-            <p class="error">Failed to update</p>
+        <input name="name" placeholder="name">
+        <br>
+        <input name="deliveryAddress" placeholder="delivery address">
+        <br>
+        <input name="phone" placeholder="phone">
+        <br>
+        <c:if test="${not empty errorMessage}">
+            <p class="error">${errorMessage}</p>
         </c:if>
-        <c:if test="${not empty param.message}">
-            <p class="success">${param.message}</p>
-        </c:if>
-        <a href="<c:url value="/checkout"/>">Checkout</a>
+        <button>Place order</button>
     </form>
 </tags:master>

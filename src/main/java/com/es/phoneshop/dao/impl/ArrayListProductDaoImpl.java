@@ -4,6 +4,8 @@ import com.es.phoneshop.dao.FindProductsAssistant;
 import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.dao.exception.GetProductException;
 import com.es.phoneshop.dao.exception.SaveProductException;
+import com.es.phoneshop.dao.sortParameters.SortMode;
+import com.es.phoneshop.dao.sortParameters.SortProperty;
 import com.es.phoneshop.model.Product;
 
 import java.util.List;

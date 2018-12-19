@@ -10,10 +10,6 @@
         Welcome to Expert-Soft training!
     </p>
     <form>
-        <input type="button" value="Cart"
-               onClick='location.href="${pageContext.servletContext.contextPath}/cart"'>
-    </form>
-    <form>
         <input type="search" name="search" value="${param.search}" size="39" placeholder="Input description phone">
         <input type="hidden" name="sortProperty" value="${param.sortProperty}">
         <input type="hidden" name="sortMode" value="${param.sortMode}">
