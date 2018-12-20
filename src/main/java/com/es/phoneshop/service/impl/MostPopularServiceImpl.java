@@ -5,6 +5,7 @@ import com.es.phoneshop.model.Product;
 import com.es.phoneshop.service.MostPopularService;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,16 +24,16 @@ public class MostPopularServiceImpl implements MostPopularService {
 
     @Override
     public List<Product> sortPopularProducts(Map<Product, Integer> products) {
-        products.putAll(products.entrySet().stream()
-                .sorted(Map.Entry.<Product, Integer>comparingByValue().reversed())
+        Map<Product, Integer> sortProducts = products.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, LinkedHashMap::new)));
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
 
         List<Product> productList = new ArrayList<>();
-        int sizePopularList = 3;
+        int maxSizePopularList = 2;
         int index = 0;
-        for (Product product : products.keySet()) {
-            if (sizePopularList >= index) {
+        for (Product product : sortProducts.keySet()) {
+            if (maxSizePopularList >= index) {
                 productList.add(product);
                 index++;
             }
@@ -44,9 +45,12 @@ public class MostPopularServiceImpl implements MostPopularService {
     @Override
     public void addProductsToPopular(MostPopularProducts popularProducts, Product viewedProduct) {
         Map<Product, Integer> products = popularProducts.getPopularProducts();
-
-        int numberViewed = products.get(viewedProduct) + START_POPULAR;
-        products.put(viewedProduct, numberViewed);
+        if (!popularProducts.getPopularProducts().containsKey(viewedProduct)) {
+            products.put(viewedProduct, START_POPULAR);
+        } else {
+            int numberViewed = products.get(viewedProduct) + START_POPULAR;
+            products.put(viewedProduct, numberViewed);
+        }
     }
 
     private static class InstanceHolder {

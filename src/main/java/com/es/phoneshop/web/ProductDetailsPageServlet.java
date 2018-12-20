@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
 public class ProductDetailsPageServlet extends HttpServlet {
 
@@ -31,7 +31,8 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private final static String PRODUCT = "product";
     private static final String QUANTITY_ERROR = "quantityError";
     private static final String VIEWED_PRODUCTS = "viewedProducts";
-    private static final String POPULAR_PRODUCTS = "popularProducts";
+    private static final String MOST_POPULAR_PRODUCTS = "mostPopularProducts";
+    private static final String ARRAY_POPULAR_PRODUCTS = "arrayMostPopularProducts";
 
     private ProductDao productDao;
     private CartService cartService;
@@ -63,14 +64,14 @@ public class ProductDetailsPageServlet extends HttpServlet {
             viewedProductsService.addProductsToViewed(viewedProducts, product);
             session.setAttribute(VIEWED_PRODUCTS, viewedProducts);
 
-            MostPopularProducts popularProducts = (MostPopularProducts) session.getAttribute(POPULAR_PRODUCTS);
-            if (popularProducts == null) {
-                popularProducts = new MostPopularProducts();
+            MostPopularProducts mostPopularProducts = (MostPopularProducts)session.getAttribute(MOST_POPULAR_PRODUCTS);
+            if (mostPopularProducts == null) {
+                mostPopularProducts = new MostPopularProducts();
             }
-            popularProductService.addProductsToPopular(popularProducts, product);
-            popularProductService.sortPopularProducts(popularProducts.getPopularProducts());
-            ServletContext servletContext = getServletConfig().getServletContext();
-            servletContext.setAttribute(POPULAR_PRODUCTS, popularProducts);
+            popularProductService.addProductsToPopular(mostPopularProducts, product);
+            List<Product> arrayMostPopularProducts = popularProductService.sortPopularProducts(mostPopularProducts.getPopularProducts());
+            session.setAttribute(ARRAY_POPULAR_PRODUCTS, arrayMostPopularProducts);
+            session.setAttribute(MOST_POPULAR_PRODUCTS, mostPopularProducts);
 
             request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);
         } catch (ArrayListProductDaoException e) {

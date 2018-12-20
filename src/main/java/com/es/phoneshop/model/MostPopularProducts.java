@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MostPopularProducts {
-
     private Map<Product, Integer> popularProducts = new HashMap<>();
 
     public Map<Product, Integer> getPopularProducts() {

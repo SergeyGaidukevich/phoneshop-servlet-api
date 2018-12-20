@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%@attribute name="pageTitle" type="java.lang.String" required="true" %>
 <%@attribute name="pageClass" type="java.lang.String" required="false" %>
@@ -27,7 +28,7 @@
         <strong>Popular viewed</strong>
         <table>
             <tr>
-                <c:forEach var="popularProduct" items="${applicationScope.popularProducts.popularProducts}">
+                <c:forEach var="popularProduct" items="${sessionScope.arrayMostPopularProducts}">
 
                     <td>
                         <p><img class="product-tile"
