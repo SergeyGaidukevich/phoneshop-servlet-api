@@ -20,6 +20,11 @@
         <param-value>true</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>mostPopularProducts</param-name>
+        <param-value>com.es.phoneshop.model.MostPopularProducts</param-value>
+    </context-param>
+
     <listener>
         <listener-class>com.es.phoneshop.web.ProductDemodataServletContextListener</listener-class>
     </listener>

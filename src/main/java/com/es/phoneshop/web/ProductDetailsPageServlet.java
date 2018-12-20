@@ -64,14 +64,15 @@ public class ProductDetailsPageServlet extends HttpServlet {
             viewedProductsService.addProductsToViewed(viewedProducts, product);
             session.setAttribute(VIEWED_PRODUCTS, viewedProducts);
 
-            MostPopularProducts mostPopularProducts = (MostPopularProducts)session.getAttribute(MOST_POPULAR_PRODUCTS);
+            ServletContext context = request.getSession().getServletContext();
+            MostPopularProducts mostPopularProducts = (MostPopularProducts) context.getAttribute(MOST_POPULAR_PRODUCTS);
             if (mostPopularProducts == null) {
                 mostPopularProducts = new MostPopularProducts();
             }
             popularProductService.addProductsToPopular(mostPopularProducts, product);
             List<Product> arrayMostPopularProducts = popularProductService.sortPopularProducts(mostPopularProducts.getPopularProducts());
             session.setAttribute(ARRAY_POPULAR_PRODUCTS, arrayMostPopularProducts);
-            session.setAttribute(MOST_POPULAR_PRODUCTS, mostPopularProducts);
+            context.setAttribute(MOST_POPULAR_PRODUCTS, mostPopularProducts);
 
             request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);
         } catch (ArrayListProductDaoException e) {
