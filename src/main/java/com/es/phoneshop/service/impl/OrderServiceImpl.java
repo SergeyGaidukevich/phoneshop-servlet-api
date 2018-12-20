@@ -2,9 +2,12 @@ package com.es.phoneshop.service.impl;
 
 import com.es.phoneshop.dao.impl.ArrayListOrderDaoImpl;
 import com.es.phoneshop.model.Cart;
+import com.es.phoneshop.model.CartItem;
 import com.es.phoneshop.model.Order;
 import com.es.phoneshop.service.OrderService;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
     private OrderServiceImpl() {
@@ -25,8 +28,10 @@ public class OrderServiceImpl implements OrderService {
         order.setName(name);
         order.setDeliveryAddress(deliveryAddress);
         order.setPhone(phone);
-        order.getCartItems().addAll(cart.getCartItems());
+        List<CartItem> cartItems = cart.getCartItems();
+        order.getCartItems().addAll(cartItems);
         order.setTotalPrice(cart.getTotalPrice());
+        cartItems.forEach(cartItem -> cartItem.getProduct().setStock(cartItem.getProduct().getStock() - cartItem.getQuantity()));
 
         ArrayListOrderDaoImpl.getInstance().save(order);
 
