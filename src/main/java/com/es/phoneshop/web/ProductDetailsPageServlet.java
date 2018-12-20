@@ -4,7 +4,7 @@ import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.dao.exception.ArrayListProductDaoException;
 import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
 import com.es.phoneshop.model.Cart;
-import com.es.phoneshop.model.MostPopularProducts;
+import com.es.phoneshop.model.PopularProducts;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.model.ViewedProducts;
 import com.es.phoneshop.service.CartService;
@@ -64,14 +64,14 @@ public class ProductDetailsPageServlet extends HttpServlet {
             viewedProductsService.addProductsToViewed(viewedProducts, product);
             session.setAttribute(VIEWED_PRODUCTS, viewedProducts);
 
-            ServletContext context = request.getSession().getServletContext();
-            MostPopularProducts popularProducts = (MostPopularProducts) context.getAttribute(MOST_POPULAR_PRODUCTS);
+            ServletContext context = getServletContext();
+            PopularProducts popularProducts = (PopularProducts) context.getAttribute(MOST_POPULAR_PRODUCTS);
             if (popularProducts == null) {
-                popularProducts = new MostPopularProducts();
+                popularProducts = new PopularProducts();
             }
-            popularProductService.addProductsToPopular(popularProducts, product);
+            popularProductService.addProductToPopular(popularProducts, product);
             List<Product> arrayMostPopularProducts = popularProductService.getMostPopularProducts(popularProducts);
-            session.setAttribute(ARRAY_POPULAR_PRODUCTS, arrayMostPopularProducts);
+            context.setAttribute(ARRAY_POPULAR_PRODUCTS, arrayMostPopularProducts);
             context.setAttribute(MOST_POPULAR_PRODUCTS, popularProducts);
 
             request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);

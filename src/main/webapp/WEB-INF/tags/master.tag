@@ -28,7 +28,7 @@
         <strong>Popular viewed</strong>
         <table>
             <tr>
-                <c:forEach var="popularProduct" items="${sessionScope.arrayMostPopularProducts}">
+                <c:forEach var="popularProduct" items="${applicationScope.arrayMostPopularProducts}">
 
                     <td>
                         <p><img class="product-tile"

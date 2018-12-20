@@ -1,12 +1,12 @@
 package com.es.phoneshop.service;
 
-import com.es.phoneshop.model.MostPopularProducts;
+import com.es.phoneshop.model.PopularProducts;
 import com.es.phoneshop.model.Product;
 
 import java.util.List;
 
 public interface PopularProductService {
-    List<Product> getMostPopularProducts(MostPopularProducts popularProducts);
+    List<Product> getMostPopularProducts(PopularProducts popularProducts);
 
-    void addProductsToPopular(MostPopularProducts popularProducts, Product viewedProduct);
+    void addProductToPopular(PopularProducts popularProducts, Product viewedProduct);
 }

@@ -1,6 +1,6 @@
 package com.es.phoneshop.service.impl;
 
-import com.es.phoneshop.model.MostPopularProducts;
+import com.es.phoneshop.model.PopularProducts;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.service.PopularProductService;
 
@@ -23,7 +23,7 @@ public class PopularProductProductServiceImpl implements PopularProductService {
     }
 
     @Override
-    public List<Product> getMostPopularProducts(MostPopularProducts popularProducts) {
+    public List<Product> getMostPopularProducts(PopularProducts popularProducts) {
         Map<Product, Integer> products = popularProducts.getPopularProducts();
         Map<Product, Integer> sortProducts = products.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
@@ -44,7 +44,7 @@ public class PopularProductProductServiceImpl implements PopularProductService {
     }
 
     @Override
-    public void addProductsToPopular(MostPopularProducts popularProducts, Product viewedProduct) {
+    public void addProductToPopular(PopularProducts popularProducts, Product viewedProduct) {
         Map<Product, Integer> products = popularProducts.getPopularProducts();
         if (!popularProducts.getPopularProducts().containsKey(viewedProduct)) {
             products.put(viewedProduct, START_POPULAR);
