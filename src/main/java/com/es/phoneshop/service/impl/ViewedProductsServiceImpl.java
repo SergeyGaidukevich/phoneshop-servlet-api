@@ -20,7 +20,6 @@ public class ViewedProductsServiceImpl implements ViewedProductsService {
         products.removeIf(viewedProduct::equals);
         products.add(viewedProduct);
 
-
     }
 
     private static class InstanceHolder {

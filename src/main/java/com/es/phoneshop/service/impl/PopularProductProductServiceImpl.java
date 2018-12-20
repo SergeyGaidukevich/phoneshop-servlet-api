@@ -2,7 +2,7 @@ package com.es.phoneshop.service.impl;
 
 import com.es.phoneshop.model.MostPopularProducts;
 import com.es.phoneshop.model.Product;
-import com.es.phoneshop.service.MostPopularService;
+import com.es.phoneshop.service.PopularProductService;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -11,19 +11,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MostPopularServiceImpl implements MostPopularService {
+public class PopularProductProductServiceImpl implements PopularProductService {
 
     private static final int START_POPULAR = 1;
 
-    private MostPopularServiceImpl() {
+    private PopularProductProductServiceImpl() {
     }
 
-    public static MostPopularServiceImpl getInstance() {
-        return MostPopularServiceImpl.InstanceHolder.instance;
+    public static PopularProductProductServiceImpl getInstance() {
+        return PopularProductProductServiceImpl.InstanceHolder.instance;
     }
 
     @Override
-    public List<Product> sortPopularProducts(Map<Product, Integer> products) {
+    public List<Product> getMostPopularProducts(MostPopularProducts popularProducts) {
+        Map<Product, Integer> products = popularProducts.getPopularProducts();
         Map<Product, Integer> sortProducts = products.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
@@ -54,6 +55,6 @@ public class MostPopularServiceImpl implements MostPopularService {
     }
 
     private static class InstanceHolder {
-        static MostPopularServiceImpl instance = new MostPopularServiceImpl();
+        static PopularProductProductServiceImpl instance = new PopularProductProductServiceImpl();
     }
 }

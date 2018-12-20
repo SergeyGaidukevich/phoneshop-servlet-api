@@ -8,10 +8,10 @@ import com.es.phoneshop.model.MostPopularProducts;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.model.ViewedProducts;
 import com.es.phoneshop.service.CartService;
-import com.es.phoneshop.service.MostPopularService;
+import com.es.phoneshop.service.PopularProductService;
 import com.es.phoneshop.service.ViewedProductsService;
 import com.es.phoneshop.service.impl.CartServiceImpl;
-import com.es.phoneshop.service.impl.MostPopularServiceImpl;
+import com.es.phoneshop.service.impl.PopularProductProductServiceImpl;
 import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
 
 import javax.servlet.ServletContext;
@@ -37,7 +37,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private ProductDao productDao;
     private CartService cartService;
     private ViewedProductsService viewedProductsService;
-    private MostPopularService popularProductService;
+    private PopularProductService popularProductService;
 
     @Override
     public void init() throws ServletException {
@@ -46,7 +46,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         productDao = ArrayListProductDaoImpl.getInstance();
         cartService = CartServiceImpl.getInstance();
         viewedProductsService = ViewedProductsServiceImpl.getInstance();
-        popularProductService = MostPopularServiceImpl.getInstance();
+        popularProductService = PopularProductProductServiceImpl.getInstance();
     }
 
     @Override
@@ -65,14 +65,14 @@ public class ProductDetailsPageServlet extends HttpServlet {
             session.setAttribute(VIEWED_PRODUCTS, viewedProducts);
 
             ServletContext context = request.getSession().getServletContext();
-            MostPopularProducts mostPopularProducts = (MostPopularProducts) context.getAttribute(MOST_POPULAR_PRODUCTS);
-            if (mostPopularProducts == null) {
-                mostPopularProducts = new MostPopularProducts();
+            MostPopularProducts popularProducts = (MostPopularProducts) context.getAttribute(MOST_POPULAR_PRODUCTS);
+            if (popularProducts == null) {
+                popularProducts = new MostPopularProducts();
             }
-            popularProductService.addProductsToPopular(mostPopularProducts, product);
-            List<Product> arrayMostPopularProducts = popularProductService.sortPopularProducts(mostPopularProducts.getPopularProducts());
+            popularProductService.addProductsToPopular(popularProducts, product);
+            List<Product> arrayMostPopularProducts = popularProductService.getMostPopularProducts(popularProducts);
             session.setAttribute(ARRAY_POPULAR_PRODUCTS, arrayMostPopularProducts);
-            context.setAttribute(MOST_POPULAR_PRODUCTS, mostPopularProducts);
+            context.setAttribute(MOST_POPULAR_PRODUCTS, popularProducts);
 
             request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);
         } catch (ArrayListProductDaoException e) {

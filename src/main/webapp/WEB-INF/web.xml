@@ -79,6 +79,16 @@
         <url-pattern>/orderOverview/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>quickOrderEntryServlet</servlet-name>
+        <servlet-class>com.es.phoneshop.web.QuickOrderEntryServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>quickOrderEntryServlet</servlet-name>
+        <url-pattern>/quickOrderEntryServlet/*</url-pattern>
+    </servlet-mapping>
+
     <session-config>
         <session-timeout>15</session-timeout>
         <cookie-config>
