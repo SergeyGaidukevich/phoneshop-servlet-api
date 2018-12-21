@@ -23,19 +23,23 @@ public class OrderServiceImpl implements OrderService {
         if (!checkParameters(name, deliveryAddress, phone)) {
             throw new IllegalArgumentException();
         }
+        List<CartItem> cartItems = cart.getCartItems();
         Order order = new Order();
 
         order.setName(name);
         order.setDeliveryAddress(deliveryAddress);
         order.setPhone(phone);
-        List<CartItem> cartItems = cart.getCartItems();
-        order.getCartItems().addAll(cartItems);
         order.setTotalPrice(cart.getTotalPrice());
-        cartItems.forEach(cartItem -> cartItem.getProduct().setStock(cartItem.getProduct().getStock() - cartItem.getQuantity()));
-
+        order.getCartItems().addAll(cartItems);
         ArrayListOrderDaoImpl.getInstance().save(order);
 
+        updateProductStock(cartItems);
+
         return order;
+    }
+
+    private void updateProductStock(List<CartItem> cartItems) {
+        cartItems.forEach(cartItem -> cartItem.getProduct().setStock(cartItem.getProduct().getStock() - cartItem.getQuantity()));
     }
 
     private boolean checkParameters(String name, String deliveryAddress, String phone) {

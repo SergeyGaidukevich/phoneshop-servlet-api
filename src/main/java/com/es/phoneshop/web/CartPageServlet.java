@@ -80,10 +80,10 @@ public class CartPageServlet extends HttpServlet {
             }
         }
 
-        request.setAttribute(QUANTITY_ERRORS, quantityErrors);
         if (quantityErrors.isEmpty()) {
             response.sendRedirect(request.getRequestURI() + MESSAGE_CART_UPDATE_SUCCESSFULLY);
         } else {
+            request.setAttribute(QUANTITY_ERRORS, quantityErrors);
             request.getRequestDispatcher(CART_JSP).forward(request, response);
         }
     }

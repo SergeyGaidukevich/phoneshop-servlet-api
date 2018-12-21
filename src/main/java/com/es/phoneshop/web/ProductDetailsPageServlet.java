@@ -11,7 +11,7 @@ import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.PopularProductService;
 import com.es.phoneshop.service.ViewedProductsService;
 import com.es.phoneshop.service.impl.CartServiceImpl;
-import com.es.phoneshop.service.impl.PopularProductProductServiceImpl;
+import com.es.phoneshop.service.impl.PopularProductsServiceImpl;
 import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
 
 import javax.servlet.ServletContext;
@@ -46,7 +46,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         productDao = ArrayListProductDaoImpl.getInstance();
         cartService = CartServiceImpl.getInstance();
         viewedProductsService = ViewedProductsServiceImpl.getInstance();
-        popularProductService = PopularProductProductServiceImpl.getInstance();
+        popularProductService = PopularProductsServiceImpl.getInstance();
     }
 
     @Override
@@ -56,23 +56,8 @@ public class ProductDetailsPageServlet extends HttpServlet {
             Product product = productDao.getProduct(id);
             request.setAttribute(PRODUCT, product);
 
-            HttpSession session = request.getSession();
-            ViewedProducts viewedProducts = (ViewedProducts) session.getAttribute(VIEWED_PRODUCTS);
-            if (viewedProducts == null) {
-                viewedProducts = new ViewedProducts();
-            }
-            viewedProductsService.addProductsToViewed(viewedProducts, product);
-            session.setAttribute(VIEWED_PRODUCTS, viewedProducts);
-
-            ServletContext context = getServletContext();
-            PopularProducts popularProducts = (PopularProducts) context.getAttribute(MOST_POPULAR_PRODUCTS);
-            if (popularProducts == null) {
-                popularProducts = new PopularProducts();
-            }
-            popularProductService.addProductToPopular(popularProducts, product);
-            List<Product> arrayMostPopularProducts = popularProductService.getMostPopularProducts(popularProducts);
-            context.setAttribute(ARRAY_POPULAR_PRODUCTS, arrayMostPopularProducts);
-            context.setAttribute(MOST_POPULAR_PRODUCTS, popularProducts);
+            addProductsToViewed(request, product);
+            increaseProductPopularity(product);
 
             request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);
         } catch (ArrayListProductDaoException e) {
@@ -82,17 +67,11 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Cart cart = (Cart) session.getAttribute(CART);
+        Cart cart = getCart(request);
 
-        if (cart == null) {
-            cart = new Cart();
-            session.setAttribute(CART, cart);
-        }
-
-        Long id = getProductId(request);
+        Long productId = getProductId(request);
         try {
-            Product product = productDao.getProduct(id);
+            Product product = productDao.getProduct(productId);
             request.setAttribute(PRODUCT, product);
 
             boolean isErrorInStockCount = true;
@@ -108,6 +87,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 request.setAttribute(QUANTITY_ERROR, "Not a number");
             }
+
             if (isErrorInStockCount) {
                 request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);
             } else {
@@ -117,6 +97,42 @@ public class ProductDetailsPageServlet extends HttpServlet {
         } catch (ArrayListProductDaoException e) {
             response.sendError(404, e.getMessage());
         }
+    }
+
+    private void increaseProductPopularity(Product product) {
+        ServletContext context = getServletContext();
+        PopularProducts popularProducts = (PopularProducts) context.getAttribute(MOST_POPULAR_PRODUCTS);
+        if (popularProducts == null) {
+            popularProducts = new PopularProducts();
+        }
+
+        popularProductService.increaseProductPopularity(popularProducts, product);
+        List<Product> arrayMostPopularProducts = popularProductService.getMostPopularProducts(popularProducts);
+        context.setAttribute(ARRAY_POPULAR_PRODUCTS, arrayMostPopularProducts);
+        context.setAttribute(MOST_POPULAR_PRODUCTS, popularProducts);
+    }
+
+    private void addProductsToViewed(HttpServletRequest request, Product product) {
+        HttpSession session = request.getSession();
+        ViewedProducts viewedProducts = (ViewedProducts) session.getAttribute(VIEWED_PRODUCTS);
+        if (viewedProducts == null) {
+            viewedProducts = new ViewedProducts();
+        }
+
+        viewedProductsService.addProductsToViewed(viewedProducts, product);
+        session.setAttribute(VIEWED_PRODUCTS, viewedProducts);
+    }
+
+    private Cart getCart(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Cart cart = (Cart) session.getAttribute(CART);
+
+        if (cart == null) {
+            cart = new Cart();
+            session.setAttribute(CART, cart);
+        }
+
+        return cart;
     }
 
     private Long getProductId(HttpServletRequest request) {

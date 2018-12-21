@@ -38,7 +38,8 @@ public class CartItemDeleteServlet extends HttpServlet {
             Product product = productDao.getProduct(id);
             cartService.deleteCartItem(cart, product);
 
-            response.sendRedirect(request.getContextPath() + "/cart?message=Cart item " + product.getCode() + " removed successfully");
+            response.sendRedirect(request.getContextPath()
+                    + String.format("/cart?message=Cart item %s removed successfully", product.getCode()));
         } catch (ArrayListProductDaoException e) {
             response.sendError(404, e.getMessage());
         }

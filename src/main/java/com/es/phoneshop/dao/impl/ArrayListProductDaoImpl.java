@@ -2,8 +2,8 @@ package com.es.phoneshop.dao.impl;
 
 import com.es.phoneshop.dao.FindProductsAssistant;
 import com.es.phoneshop.dao.ProductDao;
-import com.es.phoneshop.dao.exception.GetProductException;
-import com.es.phoneshop.dao.exception.SaveProductException;
+import com.es.phoneshop.dao.exception.ProductAlreadyExistsException;
+import com.es.phoneshop.dao.exception.ProductNotFoundException;
 import com.es.phoneshop.dao.sortParameters.SortMode;
 import com.es.phoneshop.dao.sortParameters.SortProperty;
 import com.es.phoneshop.model.Product;
@@ -41,7 +41,7 @@ public class ArrayListProductDaoImpl implements ProductDao {
         return products.stream()
                 .filter(p -> p.getId().equals(id))
                 .findAny()
-                .orElseThrow(() -> new GetProductException(String.format("Product with code %d not found", id)));
+                .orElseThrow(() -> new ProductNotFoundException(String.format("Product with code %d not found", id)));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ArrayListProductDaoImpl implements ProductDao {
             populateId(savingProduct);
             products.add(savingProduct);
         } else {
-            throw new SaveProductException("Such phone already exists");
+            throw new ProductAlreadyExistsException("Such product already exists");
         }
     }
 

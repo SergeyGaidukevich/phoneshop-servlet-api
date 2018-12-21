@@ -21,7 +21,7 @@
 <main>
     <a href="<c:url value="/cart"/>">
         <img src="<c:url value="/images/shopping-cart.svg"/>" style="max-width: 34px;">
-        <span>Cart: ${cart.totalPrice}</span>
+        <span>Cart: ${sessionScope.cart.totalPrice}</span>
     </a>
     <jsp:doBody/>
     <div class="viewedProduct">
@@ -29,7 +29,6 @@
         <table>
             <tr>
                 <c:forEach var="popularProduct" items="${applicationScope.arrayMostPopularProducts}">
-
                     <td>
                         <p><img class="product-tile"
                                 src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${popularProduct.imageUrl}">

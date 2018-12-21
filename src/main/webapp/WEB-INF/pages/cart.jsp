@@ -8,7 +8,7 @@
     <h1>Your Cart:</h1>
     <form method="post" action="<c:url value="/cart"/>">
         <button>Update cart</button>
-        <c:if test="${not empty quantityErrors}">
+        <c:if test="${not empty requestScope.quantityErrors}">
             <p class="error">Failed to update</p>
         </c:if>
         <c:if test="${not empty param.message}">
@@ -38,11 +38,11 @@
                     </td>
                     <td>
                         <input name="quantity"
-                               value="${not empty quantityErrors[item.product.id] ? paramValues['quantity'][status.index] : item.quantity}"
-                               class="number">
+                               value="${not empty requestScope.quantityErrors[item.product.id] ? paramValues['quantity'][status.index] : item.quantity}"
+                               class="number" title="quantity">
                         <input type="hidden" name="productId" value="${item.product.id}">
-                        <c:if test="${not empty quantityErrors[item.product.id]}">
-                            <p class="error">${quantityErrors[item.product.id]}</p>
+                        <c:if test="${not empty requestScope.quantityErrors[item.product.id]}">
+                            <p class="error">${requestScope.quantityErrors[item.product.id]}</p>
                         </c:if>
                     </td>
                     <td>
@@ -59,12 +59,13 @@
             </tr>
         </table>
         <button>Update cart</button>
-        <c:if test="${not empty quantityErrors}">
+        <c:if test="${not empty requestScope.quantityErrors}">
             <p class="error">Failed to update</p>
         </c:if>
         <c:if test="${not empty param.message}">
             <p class="success">${param.message}</p>
         </c:if>
+        <br>
         <a href="<c:url value="/checkout"/>">Checkout</a>
     </form>
 </tags:master>

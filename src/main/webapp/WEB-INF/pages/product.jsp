@@ -5,7 +5,6 @@
 
 <jsp:useBean id="product" type="com.es.phoneshop.model.Product" scope="request"/>
 <tags:master pageTitle="${product.description}">
-    <p>${sessionScope.cart}</p>
     <table>
         <tr>
             <td>
@@ -26,8 +25,8 @@
                     <c:if test="${not empty param.message}">
                         <p class="success">${param.message}</p>
                     </c:if>
-                    <c:if test="${not empty quantityError}">
-                        <p class="error">${quantityError}</p>
+                    <c:if test="${not empty requestScope.quantityError}">
+                        <p class="error">${requestScope.quantityError}</p>
                     </c:if>
                 </form>
             </td>
