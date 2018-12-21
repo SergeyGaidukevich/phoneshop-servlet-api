@@ -21,6 +21,7 @@ public class CheckoutPageServlet extends HttpServlet {
     private static final String PHONE = "phone";
     private static final String DELIVERY_ADDRESS = "deliveryAddress";
     private static final String ORDER_OVERVIEW = "/orderOverview/";
+    private static final String ERROR_MESSAGE = "errorMessage";
 
     private OrderService orderService;
     private CartService cartService;
@@ -51,7 +52,7 @@ public class CheckoutPageServlet extends HttpServlet {
             cartService.clearCart(cart);
             response.sendRedirect(request.getContextPath() + ORDER_OVERVIEW + order.getId());
         } catch (IllegalArgumentException e) {
-            request.setAttribute("errorMessage", "Field is not valid");
+            request.setAttribute(ERROR_MESSAGE, "Field is not valid");
             request.getRequestDispatcher(CHECKOUT_JSP).forward(request, response);
         }
 

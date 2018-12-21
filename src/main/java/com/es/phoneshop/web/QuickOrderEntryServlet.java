@@ -16,6 +16,7 @@ import java.io.IOException;
 public class QuickOrderEntryServlet extends HttpServlet {
     private static final String QUICK_ORDER_ENTRY_JSP = "/WEB-INF/pages/quickOrderEntry.jsp";
     private static final String CART = "cart";
+    private static final String ERROR_MESSAGE = "errorMessage";
 
     private ProductDao productDao;
     private CartService cartService;
@@ -38,11 +39,10 @@ public class QuickOrderEntryServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Cart cart = (Cart) session.getAttribute(CART);
 
-
         try {
             response.sendRedirect(request.getContextPath());
         } catch (IllegalArgumentException e) {
-            request.setAttribute("errorMessage", "Field is not valid");
+            request.setAttribute(ERROR_MESSAGE, "Field is not valid");
             request.getRequestDispatcher(QUICK_ORDER_ENTRY_JSP).forward(request, response);
         }
 
