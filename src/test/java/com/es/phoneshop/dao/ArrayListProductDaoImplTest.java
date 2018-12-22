@@ -131,6 +131,17 @@ public class ArrayListProductDaoImplTest {
         assertEquals(expected, result);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void deleteTest() {
+        Product product = createProduct();
+        List<Product> products = new ArrayList<>();
+        products.add(product);
+        productDao = new ArrayListProductDaoImpl(products);
+
+        long id = 80L;
+        productDao.delete(id);
+    }
+
     private void assertProduct(Product product) {
         assertNotNull(product);
         assertNotNull(product.getId());

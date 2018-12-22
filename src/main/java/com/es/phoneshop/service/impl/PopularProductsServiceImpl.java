@@ -59,6 +59,6 @@ public class PopularProductsServiceImpl implements PopularProductService {
     }
 
     private static class InstanceHolder {
-        static PopularProductsServiceImpl instance = new PopularProductsServiceImpl();
+        static final PopularProductsServiceImpl instance = new PopularProductsServiceImpl();
     }
 }

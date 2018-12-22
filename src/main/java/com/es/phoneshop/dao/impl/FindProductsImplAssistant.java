@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 public class FindProductsImplAssistant implements FindProductsAssistant {
     private static final String WORDS_SEPARATOR = "\\s";
 
-    private Map<SortProperty, Comparator<Product>> propertyComparators;
+    private final Map<SortProperty, Comparator<Product>> propertyComparators;
 
     private FindProductsImplAssistant() {
         propertyComparators = new HashMap<>();

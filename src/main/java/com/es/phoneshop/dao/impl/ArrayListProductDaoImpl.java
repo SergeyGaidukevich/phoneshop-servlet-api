@@ -22,7 +22,7 @@ public class ArrayListProductDaoImpl implements ProductDao {
     private final List<Product> products = new CopyOnWriteArrayList<>();
     private final AtomicLong currentId = new AtomicLong(1);
 
-    private FindProductsAssistant findProductsAssistant = FindProductsImplAssistant.getInstance();
+    private final FindProductsAssistant findProductsAssistant = FindProductsImplAssistant.getInstance();
 
     private ArrayListProductDaoImpl() {
     }
@@ -89,7 +89,9 @@ public class ArrayListProductDaoImpl implements ProductDao {
 
     @Override
     public void delete(Long id) {
-        throw new RuntimeException("Not implemented");
+        if (!products.removeIf(p -> p.getId().equals(id))) {
+            throw new IllegalArgumentException("Product not exists with such id = " + id);
+        }
     }
 
     private void populateId(Product product) {
@@ -97,6 +99,6 @@ public class ArrayListProductDaoImpl implements ProductDao {
     }
 
     private static class InstanceHolder {
-        static ArrayListProductDaoImpl instance = new ArrayListProductDaoImpl();
+        static final ArrayListProductDaoImpl instance = new ArrayListProductDaoImpl();
     }
 }

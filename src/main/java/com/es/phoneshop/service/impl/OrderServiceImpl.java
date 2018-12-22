@@ -47,6 +47,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private static class InstanceHolder {
-        static OrderServiceImpl instance = new OrderServiceImpl();
+        static final OrderServiceImpl instance = new OrderServiceImpl();
     }
 }

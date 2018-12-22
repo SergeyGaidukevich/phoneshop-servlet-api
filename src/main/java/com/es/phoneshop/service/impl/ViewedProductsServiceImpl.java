@@ -15,14 +15,13 @@ public class ViewedProductsServiceImpl implements ViewedProductsService {
     }
 
     @Override
-    public void addProductsToViewed(ViewedProducts viewedProducts, Product viewedProduct) {
+    public void addProductToViewed(ViewedProducts viewedProducts, Product viewedProduct) {
         CircularFifoQueue<Product> products = viewedProducts.getViewedProducts();
         products.removeIf(viewedProduct::equals);
         products.add(viewedProduct);
-
     }
 
     private static class InstanceHolder {
-        static ViewedProductsServiceImpl instance = new ViewedProductsServiceImpl();
+        static final ViewedProductsServiceImpl instance = new ViewedProductsServiceImpl();
     }
 }

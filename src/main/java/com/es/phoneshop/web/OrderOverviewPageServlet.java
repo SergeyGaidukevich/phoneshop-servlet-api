@@ -27,7 +27,7 @@ public class OrderOverviewPageServlet extends HttpServlet {
         StringBuffer uri = request.getRequestURL();
         String stringId = uri.substring(uri.lastIndexOf("/") + 1);
         Long id = Long.parseLong(stringId);
-        Order order = orderDao.getProduct(id);
+        Order order = orderDao.getOrder(id);
 
         request.setAttribute(ORDER, order);
         request.getRequestDispatcher(OVERVIEW_JSP).forward(request, response);

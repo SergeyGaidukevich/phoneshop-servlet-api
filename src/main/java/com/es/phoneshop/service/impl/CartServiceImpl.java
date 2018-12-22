@@ -83,6 +83,6 @@ public class CartServiceImpl implements CartService {
     }
 
     private static class InstanceHolder {
-        static CartServiceImpl instance = new CartServiceImpl();
+        static final CartServiceImpl instance = new CartServiceImpl();
     }
 }

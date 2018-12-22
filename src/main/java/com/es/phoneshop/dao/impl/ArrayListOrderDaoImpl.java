@@ -9,8 +9,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ArrayListOrderDaoImpl implements OrderDao {
-    private static final String NULL_ORDER_ID = "Null order id.";
-
     private final List<Order> orders = new CopyOnWriteArrayList<>();
     private final AtomicLong currentId = new AtomicLong(1);
 
@@ -18,12 +16,17 @@ public class ArrayListOrderDaoImpl implements OrderDao {
 
     }
 
+    public ArrayListOrderDaoImpl(List<Order> orders) {
+        this.orders.addAll(orders);
+        this.orders.forEach(this::populateId);
+    }
+
     public static ArrayListOrderDaoImpl getInstance() {
         return ArrayListOrderDaoImpl.InstanceHolder.instance;
     }
 
     @Override
-    public Order getProduct(Long id) {
+    public Order getOrder(Long id) {
         return orders.stream()
                 .filter(product -> product.getId().equals(id))
                 .findFirst()
@@ -41,6 +44,13 @@ public class ArrayListOrderDaoImpl implements OrderDao {
         }
     }
 
+    @Override
+    public void delete(Long id) {
+        if (!orders.removeIf(p -> p.getId().equals(id))) {
+            throw new IllegalArgumentException("Order not exists with such id = " + id);
+        }
+    }
+
     private void populateId(Order order) {
         order.setId(currentId.getAndIncrement());
     }
@@ -50,6 +60,6 @@ public class ArrayListOrderDaoImpl implements OrderDao {
     }
 
     private static class InstanceHolder {
-        static ArrayListOrderDaoImpl instance = new ArrayListOrderDaoImpl();
+        static final ArrayListOrderDaoImpl instance = new ArrayListOrderDaoImpl();
     }
 }

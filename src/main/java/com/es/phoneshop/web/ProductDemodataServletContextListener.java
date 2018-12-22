@@ -9,8 +9,7 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 public class ProductDemodataServletContextListener implements ServletContextListener {
-
-    public static final String INSERT_SAMPLE_DATA = "insertSampleData";
+    private static final String INSERT_SAMPLE_DATA = "insertSampleData";
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {

@@ -119,7 +119,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
             viewedProducts = new ViewedProducts();
         }
 
-        viewedProductsService.addProductsToViewed(viewedProducts, product);
+        viewedProductsService.addProductToViewed(viewedProducts, product);
         session.setAttribute(VIEWED_PRODUCTS, viewedProducts);
     }
 
