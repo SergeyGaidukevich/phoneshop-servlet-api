@@ -58,30 +58,30 @@
         <servlet-name>checkout</servlet-name>
         <servlet-class>com.es.phoneshop.web.CheckoutPageServlet</servlet-class>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>checkout</servlet-name>
         <url-pattern>/checkout</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>orderOverview</servlet-name>
         <servlet-class>com.es.phoneshop.web.OrderOverviewPageServlet</servlet-class>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>orderOverview</servlet-name>
         <url-pattern>/orderOverview/*</url-pattern>
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>quickOrderEntryServlet</servlet-name>
+        <servlet-name>quickOrderEntry</servlet-name>
         <servlet-class>com.es.phoneshop.web.QuickOrderEntryServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>quickOrderEntryServlet</servlet-name>
-        <url-pattern>/quickOrderEntryServlet/*</url-pattern>
+        <servlet-name>quickOrderEntry</servlet-name>
+        <url-pattern>/quickOrderEntry/*</url-pattern>
     </servlet-mapping>
 
     <session-config>

@@ -3,7 +3,8 @@ package com.es.phoneshop.service.impl;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.model.ViewedProducts;
 import com.es.phoneshop.service.ViewedProductsService;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
+
+import java.util.Queue;
 
 public class ViewedProductsServiceImpl implements ViewedProductsService {
 
@@ -15,10 +16,10 @@ public class ViewedProductsServiceImpl implements ViewedProductsService {
     }
 
     @Override
-    public void addProductToViewed(ViewedProducts viewedProducts, Product viewedProduct) {
-        CircularFifoQueue<Product> products = viewedProducts.getViewedProducts();
-        products.removeIf(viewedProduct::equals);
-        products.add(viewedProduct);
+    public void addProductToViewed(ViewedProducts viewedProducts, Product product) {
+        Queue<Product> products = viewedProducts.getViewedProducts();
+        products.removeIf(product::equals);
+        products.add(product);
     }
 
     private static class InstanceHolder {

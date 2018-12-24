@@ -1,7 +1,7 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.dao.ProductDao;
-import com.es.phoneshop.dao.exception.ArrayListProductDaoException;
+import com.es.phoneshop.dao.exception.DaoException;
 import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
 import com.es.phoneshop.model.Cart;
 import com.es.phoneshop.model.PopularProducts;
@@ -13,8 +13,8 @@ import com.es.phoneshop.service.ViewedProductsService;
 import com.es.phoneshop.service.impl.CartServiceImpl;
 import com.es.phoneshop.service.impl.PopularProductsServiceImpl;
 import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
+import org.apache.commons.lang3.math.NumberUtils;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -53,63 +53,59 @@ public class ProductDetailsPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             Long id = getProductId(request);
-            Product product = productDao.getProduct(id);
+            Product product = productDao.get(id);
             request.setAttribute(PRODUCT, product);
 
             addProductsToViewed(request, product);
             increaseProductPopularity(product);
 
             request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);
-        } catch (ArrayListProductDaoException e) {
+        } catch (DaoException e) {
             response.sendError(404, e.getMessage());
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Cart cart = getCart(request);
-
-        Long productId = getProductId(request);
         try {
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.get(getProductId(request));
             request.setAttribute(PRODUCT, product);
 
-            boolean isErrorInStockCount = true;
-            int quantity = 0;
-            try {
-                quantity = Integer.valueOf(request.getParameter(QUANTITY));
-                try {
-                    cartService.addProductToCart(cart, product, quantity);
-                    isErrorInStockCount = false;
-                } catch (IllegalArgumentException e) {
-                    request.setAttribute(QUANTITY_ERROR, "Not enough quantity in stock");
-                }
-            } catch (NumberFormatException e) {
-                request.setAttribute(QUANTITY_ERROR, "Not a number");
-            }
-
-            if (isErrorInStockCount) {
-                request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);
+            if (NumberUtils.isNumber(request.getParameter(QUANTITY))) {
+                addProductToCart(request, response, product);
             } else {
-                response.sendRedirect(request.getRequestURI() +
-                        String.format("?message=add %d product(s) to cart Successfully", quantity));
+                request.setAttribute(QUANTITY_ERROR, "Not a number");
+                request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);
             }
-        } catch (ArrayListProductDaoException e) {
+        } catch (DaoException e) {
             response.sendError(404, e.getMessage());
         }
     }
 
+    private void addProductToCart(HttpServletRequest request, HttpServletResponse response, Product product) throws ServletException, IOException {
+        int quantity = Integer.valueOf(request.getParameter(QUANTITY));
+        try {
+            cartService.addProductToCart(getCart(request), product, quantity);
+
+            response.sendRedirect(request.getRequestURI() +
+                    String.format("?message=add %d product(s) to cart Successfully", quantity));
+        } catch (IllegalArgumentException e) {
+            request.setAttribute(QUANTITY_ERROR, e.getMessage());
+            request.getRequestDispatcher(PRODUCT_JSP).forward(request, response);
+        }
+    }
+
     private void increaseProductPopularity(Product product) {
-        ServletContext context = getServletContext();
-        PopularProducts popularProducts = (PopularProducts) context.getAttribute(MOST_POPULAR_PRODUCTS);
+        PopularProducts popularProducts = (PopularProducts) getServletContext().getAttribute(MOST_POPULAR_PRODUCTS);
         if (popularProducts == null) {
             popularProducts = new PopularProducts();
         }
 
         popularProductService.increaseProductPopularity(popularProducts, product);
         List<Product> arrayMostPopularProducts = popularProductService.getMostPopularProducts(popularProducts);
-        context.setAttribute(ARRAY_POPULAR_PRODUCTS, arrayMostPopularProducts);
-        context.setAttribute(MOST_POPULAR_PRODUCTS, popularProducts);
+
+        getServletContext().setAttribute(ARRAY_POPULAR_PRODUCTS, arrayMostPopularProducts);
+        getServletContext().setAttribute(MOST_POPULAR_PRODUCTS, popularProducts);
     }
 
     private void addProductsToViewed(HttpServletRequest request, Product product) {
@@ -120,6 +116,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         }
 
         viewedProductsService.addProductToViewed(viewedProducts, product);
+
         session.setAttribute(VIEWED_PRODUCTS, viewedProducts);
     }
 
@@ -138,6 +135,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private Long getProductId(HttpServletRequest request) {
         StringBuffer uri = request.getRequestURL();
         String stringId = uri.substring(uri.lastIndexOf("/") + 1);
+
         return Long.parseLong(stringId);
     }
 }

@@ -3,6 +3,7 @@ package com.es.phoneshop.service;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.model.ViewedProducts;
 import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,7 +12,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 import static org.junit.Assert.assertEquals;
 
@@ -47,15 +47,12 @@ public class ViewedProductsServiceImplTest {
         viewedProductService.addProductToViewed(viewedProducts, products.get(3));
         viewedProductService.addProductToViewed(viewedProducts, products.get(4));
 
-        CircularFifoQueue<Product>  viewedProductsQueue = viewedProducts.getViewedProducts();
-        Product firsLastViewedProduct = viewedProductsQueue.get(2);
-        Product secondLastViewedProduct = viewedProductsQueue.get(1);
-        Product thirdLastViewedProduct = viewedProductsQueue.get(0);
+        CircularFifoQueue<Product> actualViewedProducts = (CircularFifoQueue<Product>) viewedProducts.getViewedProducts();
+        Product firsLastViewedProduct = actualViewedProducts.get(2);
+        Product secondLastViewedProduct = actualViewedProducts.get(1);
+        Product thirdLastViewedProduct = actualViewedProducts.get(0);
 
-        int expectedSizeViewedProductsQueue = 3;
-        int resultSizeViewedProductsQueue = viewedProductsQueue.size();
-
-        assertEquals(expectedSizeViewedProductsQueue, resultSizeViewedProductsQueue);
+        assertEquals(3, actualViewedProducts.size());
         assertEquals(products.get(4), firsLastViewedProduct);
         assertEquals(products.get(3), secondLastViewedProduct);
         assertEquals(products.get(2), thirdLastViewedProduct);

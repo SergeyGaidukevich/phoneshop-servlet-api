@@ -1,6 +1,6 @@
 package com.es.phoneshop.dao.exception;
 
-public class ProductNotFoundException extends ArrayListProductDaoException {
+public class ProductNotFoundException extends DaoException {
     public ProductNotFoundException() {
     }
 

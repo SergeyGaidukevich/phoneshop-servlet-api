@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CartServiceImplTest {
     private static Product product;
@@ -41,18 +42,9 @@ public class CartServiceImplTest {
         int quantity = 5;
         cartService.addProductToCart(cart, product, quantity);
 
-        int expectedSizeCart = 1;
-        int resultSizeCart = cart.getCartItems().size();
-
-        int expectedSizeQuantity = 5;
-        int resultSizeQuantity = cart.getCartItems().get(0).getQuantity();
-
-        BigDecimal expectedTotalPrice = new BigDecimal(500);
-        BigDecimal resultTotalPrice = cart.getTotalPrice();
-
-        assertEquals(expectedSizeCart, resultSizeCart);
-        assertEquals(expectedSizeQuantity, resultSizeQuantity);
-        assertEquals(expectedTotalPrice, resultTotalPrice);
+        assertEquals(1, cart.getCartItems().size());
+        assertEquals(5, cart.getCartItems().get(0).getQuantity());
+        assertEquals(new BigDecimal(500), cart.getTotalPrice());
     }
 
     @Test
@@ -62,18 +54,9 @@ public class CartServiceImplTest {
         cartService.addProductToCart(cart, product, firstAddedQuantity);
         cartService.addProductToCart(cart, product, secondAddedQuantity);
 
-        int expectedSizeCart = 1;
-        int resultSizeCart = cart.getCartItems().size();
-
-        int expectedQuantity = 12;
-        int resultQuantity = cart.getCartItems().get(0).getQuantity();
-
-        BigDecimal expectedTotalPrice = new BigDecimal(1200);
-        BigDecimal resultTotalPrice = cart.getTotalPrice();
-
-        assertEquals(expectedSizeCart, resultSizeCart);
-        assertEquals(expectedQuantity, resultQuantity);
-        assertEquals(expectedTotalPrice, resultTotalPrice);
+        assertEquals(1, cart.getCartItems().size());
+        assertEquals(12, cart.getCartItems().get(0).getQuantity());
+        assertEquals(new BigDecimal(1200), cart.getTotalPrice());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -99,18 +82,9 @@ public class CartServiceImplTest {
 
         cartService.updateCart(cart, product, quantity);
 
-        int expectedSizeCart = 1;
-        int resultSizeCart = cart.getCartItems().size();
-
-        int expectedQuantity = 5;
-        int resultQuantity = cart.getCartItems().get(0).getQuantity();
-
-        BigDecimal expectedTotalPrice = new BigDecimal(500);
-        BigDecimal resultTotalPrice = cart.getTotalPrice();
-
-        assertEquals(expectedSizeCart, resultSizeCart);
-        assertEquals(expectedQuantity, resultQuantity);
-        assertEquals(expectedTotalPrice, resultTotalPrice);
+        assertEquals(1, cart.getCartItems().size());
+        assertEquals(5, cart.getCartItems().get(0).getQuantity());
+        assertEquals(new BigDecimal(500), cart.getTotalPrice());
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -137,14 +111,8 @@ public class CartServiceImplTest {
 
         cartService.deleteCartItem(cart, product);
 
-        int expectedSizeCart = 0;
-        int resultSizeCart = cart.getCartItems().size();
-
-        BigDecimal expectedTotalPrice = new BigDecimal(0);
-        BigDecimal resultTotalPrice = cart.getTotalPrice();
-
-        assertEquals(expectedSizeCart, resultSizeCart);
-        assertEquals(expectedTotalPrice, resultTotalPrice);
+        assertTrue(cart.getCartItems().isEmpty());
+        assertEquals(new BigDecimal(0), cart.getTotalPrice());
     }
 
     @Test
@@ -156,13 +124,7 @@ public class CartServiceImplTest {
 
         cartService.clearCart(cart);
 
-        int expectedSizeCart = 0;
-        int resultSizeCart = cart.getCartItems().size();
-
-        BigDecimal expectedTotalPrice = new BigDecimal(0);
-        BigDecimal resultTotalPrice = cart.getTotalPrice();
-
-        assertEquals(expectedSizeCart, resultSizeCart);
-        assertEquals(expectedTotalPrice, resultTotalPrice);
+        assertTrue(cart.getCartItems().isEmpty());
+        assertEquals(new BigDecimal(0), cart.getTotalPrice());
     }
 }

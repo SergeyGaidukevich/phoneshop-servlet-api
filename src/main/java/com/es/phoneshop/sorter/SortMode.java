@@ -1,4 +1,4 @@
-package com.es.phoneshop.dao.sortParameters;
+package com.es.phoneshop.sorter;
 
 public enum SortMode {
     ASCENDING,

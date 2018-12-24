@@ -48,11 +48,14 @@
                 </c:if>
             </tr>
         </table>
-        <input name="name" placeholder="name">
+        <input name="name" placeholder="name"
+               value="${not empty paramValues['errorMessage'][0] ? "" : paramValues['name'][0]}">
         <br>
-        <input name="deliveryAddress" placeholder="delivery address">
+        <input name="deliveryAddress" placeholder="delivery address"
+               value="${not empty paramValues['errorMessage'][0] ? "" : paramValues['deliveryAddress'][0]}">
         <br>
-        <input name="phone" placeholder="phone">
+        <input name="phone" placeholder="phone"
+               value="${not empty paramValues['errorMessage'][0] ? "" : paramValues['phone'][0]}">
         <br>
         <button>Place order</button>
         <c:if test="${not empty requestScope.errorMessage}">

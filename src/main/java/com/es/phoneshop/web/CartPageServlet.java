@@ -1,12 +1,13 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.dao.ProductDao;
-import com.es.phoneshop.dao.exception.ArrayListProductDaoException;
+import com.es.phoneshop.dao.exception.DaoException;
 import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
 import com.es.phoneshop.model.Cart;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.impl.CartServiceImpl;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,10 +25,9 @@ public class CartPageServlet extends HttpServlet {
     private static final String CART = "cart";
     private static final String QUANTITY = "quantity";
     private static final String PRODUCT_ID = "productId";
-    private static final String NOT_ENOUGH_QUANTITY_IN_STOCK = "Not enough quantity in stock";
     private static final String NOT_A_NUMBER = "Not a number";
     private static final String MESSAGE_CART_UPDATE_SUCCESSFULLY = "?message=cart update successfully";
-    private static final String PRODUCT_NO_FOUND_IN_CART_RELOAD_PAGE = "Product no found in Cart, reload page!";
+    private static final String RELOAD_PAGE = "Product with code = %s no found in Cart, reload page!";
 
     private ProductDao productDao;
     private CartService cartService;
@@ -55,28 +55,27 @@ public class CartPageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Cart cart = (Cart) session.getAttribute(CART);
         String[] quantities = request.getParameterValues(QUANTITY);
         String[] productIds = request.getParameterValues(PRODUCT_ID);
         Map<Long, String> quantityErrors = new HashMap<>();
 
         for (int i = 0; i < productIds.length; i++) {
             Long productId = Long.valueOf(productIds[i]);
-            try {
-                Product product = productDao.getProduct(productId);
-                int quantity = Integer.valueOf(quantities[i]);
+            if (NumberUtils.isNumber(quantities[i])) {
                 try {
-                    cartService.updateCart(cart, product, quantity);
+                    Product product = productDao.get(productId);
+                    int quantity = Integer.parseUnsignedInt(quantities[i]);
+
+                    cartService.updateCart(getCart(request), product, quantity);
+                } catch (DaoException e) {
+                    response.sendError(404, e.getMessage());
                 } catch (IllegalArgumentException e) {
-                    quantityErrors.put(productId, NOT_ENOUGH_QUANTITY_IN_STOCK);
+                    quantityErrors.put(productId, e.getMessage());
                 } catch (NoSuchElementException e) {
-                    quantityErrors.put(productId, PRODUCT_NO_FOUND_IN_CART_RELOAD_PAGE);
+                    quantityErrors.put(productId, String.format(RELOAD_PAGE, e.getMessage()));
                 }
-            } catch (NumberFormatException e) {
+            } else {
                 quantityErrors.put(productId, NOT_A_NUMBER);
-            } catch (ArrayListProductDaoException e) {
-                response.sendError(404, e.getMessage());
             }
         }
 
@@ -86,5 +85,17 @@ public class CartPageServlet extends HttpServlet {
             request.setAttribute(QUANTITY_ERRORS, quantityErrors);
             request.getRequestDispatcher(CART_JSP).forward(request, response);
         }
+    }
+
+    private Cart getCart(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Cart cart = (Cart) session.getAttribute(CART);
+
+        if (cart == null) {
+            cart = new Cart();
+            session.setAttribute(CART, cart);
+        }
+
+        return cart;
     }
 }

@@ -52,7 +52,7 @@ public class CheckoutPageServlet extends HttpServlet {
             cartService.clearCart(cart);
             response.sendRedirect(request.getContextPath() + ORDER_OVERVIEW + order.getId());
         } catch (IllegalArgumentException e) {
-            request.setAttribute(ERROR_MESSAGE, "Field is not valid");
+            request.setAttribute(ERROR_MESSAGE, "Some field is not valid");
             request.getRequestDispatcher(CHECKOUT_JSP).forward(request, response);
         }
 

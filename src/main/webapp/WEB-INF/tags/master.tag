@@ -23,6 +23,10 @@
         <img src="<c:url value="/images/shopping-cart.svg"/>" style="max-width: 34px;">
         <span>Cart: ${sessionScope.cart.totalPrice}</span>
     </a>
+    <br>
+    <a href="<c:url value="/quickOrderEntry/"/>">
+        <span>Create quick order</span>
+    </a>
     <jsp:doBody/>
     <div class="viewedProduct">
         <strong>Popular viewed</strong>

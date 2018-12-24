@@ -1,5 +1,6 @@
 package com.es.phoneshop.service.impl;
 
+import com.es.phoneshop.dao.OrderDao;
 import com.es.phoneshop.dao.impl.ArrayListOrderDaoImpl;
 import com.es.phoneshop.model.Cart;
 import com.es.phoneshop.model.CartItem;
@@ -10,8 +11,13 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
-    private OrderServiceImpl() {
 
+    private static final String PHONE_REGEX = "^[+]{1}[0-9]{3}[(]{1}[0-9]{2}[)]{1}[0-9]{7}$";
+
+    private OrderDao orderDao;
+
+    private OrderServiceImpl() {
+        this.orderDao = ArrayListOrderDaoImpl.getInstance();
     }
 
     public static OrderServiceImpl getInstance() {
@@ -23,27 +29,38 @@ public class OrderServiceImpl implements OrderService {
         if (!checkParameters(name, deliveryAddress, phone)) {
             throw new IllegalArgumentException();
         }
-        List<CartItem> cartItems = cart.getCartItems();
-        Order order = new Order();
 
+        Order order = createOrder(name, deliveryAddress, phone, cart);
+        orderDao.save(order);
+        updateProductStock(cart.getCartItems());
+
+        return order;
+    }
+
+    private Order createOrder(String name, String deliveryAddress, String phone, Cart cart) {
+        Order order = new Order();
         order.setName(name);
         order.setDeliveryAddress(deliveryAddress);
         order.setPhone(phone);
         order.setTotalPrice(cart.getTotalPrice());
-        order.getCartItems().addAll(cartItems);
-        ArrayListOrderDaoImpl.getInstance().save(order);
-
-        updateProductStock(cartItems);
+        order.getCartItems().addAll(cart.getCartItems());
 
         return order;
     }
 
     private void updateProductStock(List<CartItem> cartItems) {
-        cartItems.forEach(cartItem -> cartItem.getProduct().setStock(cartItem.getProduct().getStock() - cartItem.getQuantity()));
+        cartItems.forEach(cartItem -> {
+            int finalStock = cartItem.getProduct().getStock() - cartItem.getQuantity();
+            cartItem.getProduct().setStock(finalStock);
+        });
     }
 
     private boolean checkParameters(String name, String deliveryAddress, String phone) {
-        return (StringUtils.isNotBlank(name) && StringUtils.isNotBlank(deliveryAddress) && StringUtils.isNotBlank(phone));
+        return StringUtils.isNoneBlank(name, deliveryAddress) && isPhone(phone);
+    }
+
+    private boolean isPhone(String phone) {
+        return phone != null && phone.matches(PHONE_REGEX);
     }
 
     private static class InstanceHolder {

@@ -1,18 +1,18 @@
 package com.es.phoneshop.dao;
 
+import com.es.phoneshop.dao.exception.OrderNotFoundException;
 import com.es.phoneshop.dao.impl.ArrayListOrderDaoImpl;
-import org.junit.Test;
-
 import com.es.phoneshop.model.Order;
+import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ArrayListOrderDaoImplTest {
     private OrderDao orderDao;
@@ -27,13 +27,13 @@ public class ArrayListOrderDaoImplTest {
         Collections.addAll(orders, firstOrder, secondOrder);
 
         orderDao = new ArrayListOrderDaoImpl(orders);
-        Order result = orderDao.getOrder(1L);
+        Order result = orderDao.get(1L);
 
         assertNotNull(result);
         assertEquals(firstOrder, result);
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = OrderNotFoundException.class)
     public void getOrderTestIfOrderNotExist() {
         List<Order> orders = new ArrayList<>();
         Order firstOrder = createOrder();
@@ -43,34 +43,32 @@ public class ArrayListOrderDaoImplTest {
         Collections.addAll(orders, firstOrder, secondOrder);
 
         orderDao = new ArrayListOrderDaoImpl(orders);
-        orderDao.getOrder(3L);
+        orderDao.get(3L);
     }
 
     @Test
     public void saveTest() {
-        List<Order> orders = new ArrayList<>();
-        orders.add(createOrder());
-        orderDao = new ArrayListOrderDaoImpl(orders);
         Order expected = createOrder();
-        expected.setId(2L);
+        expected.setId(1L);
 
-        Order product = createOrder();
-        orderDao.save(product);
-        Order result = orderDao.getOrder(2L);
+        Order order = createOrder();
+        orderDao = new ArrayListOrderDaoImpl(new ArrayList<>());
+        orderDao.save(order);
 
-        assertNotNull(orderDao);
-        assertEquals(expected, result);
+        assertEquals(expected, orderDao.get(1L));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void deleteTest() {
         Order order = createOrder();
         List<Order> orders = new ArrayList<>();
         orders.add(order);
         orderDao = new ArrayListOrderDaoImpl(orders);
 
-        long id = 80L;
+        long id = 1L;
         orderDao.delete(id);
+
+        assertTrue(orderDao.getAll().isEmpty());
     }
 
     private Order createOrder() {

@@ -1,12 +1,16 @@
 package com.es.phoneshop.dao.impl;
 
-import com.es.phoneshop.dao.FindProductsAssistant;
 import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.dao.exception.ProductAlreadyExistsException;
 import com.es.phoneshop.dao.exception.ProductNotFoundException;
-import com.es.phoneshop.dao.sortParameters.SortMode;
-import com.es.phoneshop.dao.sortParameters.SortProperty;
+import com.es.phoneshop.finder.ProductFinder;
+import com.es.phoneshop.finder.impl.ProductFinderImpl;
 import com.es.phoneshop.model.Product;
+import com.es.phoneshop.sorter.ProductSorter;
+import com.es.phoneshop.sorter.SortMode;
+import com.es.phoneshop.sorter.SortProperty;
+import com.es.phoneshop.sorter.impl.ProductSorterImpl;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,14 +26,19 @@ public class ArrayListProductDaoImpl implements ProductDao {
     private final List<Product> products = new CopyOnWriteArrayList<>();
     private final AtomicLong currentId = new AtomicLong(1);
 
-    private final FindProductsAssistant findProductsAssistant = FindProductsImplAssistant.getInstance();
+    private ProductSorter sorter;
+    private ProductFinder finder;
 
     private ArrayListProductDaoImpl() {
+        sorter = new ProductSorterImpl();
+        finder = new ProductFinderImpl();
     }
 
-    public ArrayListProductDaoImpl(List<Product> products) {
+    public ArrayListProductDaoImpl(List<Product> products, ProductSorter sorter, ProductFinder finder) {
         this.products.addAll(products);
         this.products.forEach(this::populateId);
+        this.sorter = sorter;
+        this.finder = finder;
     }
 
     public static ArrayListProductDaoImpl getInstance() {
@@ -37,11 +46,19 @@ public class ArrayListProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public Product getProduct(Long id) {
+    public Product get(Long id) {
         return products.stream()
                 .filter(p -> p.getId().equals(id))
                 .findAny()
-                .orElseThrow(() -> new ProductNotFoundException(String.format("Product with code %d not found", id)));
+                .orElseThrow(() -> new ProductNotFoundException(String.format("Product with id = %d not found", id)));
+    }
+
+    @Override
+    public Product get(String code) {
+        return products.stream()
+                .filter(p -> StringUtils.equalsIgnoreCase(p.getCode(), code))
+                .findAny()
+                .orElseThrow(() -> new ProductNotFoundException(String.format("Product with code = %s not found", code)));
     }
 
     @Override
@@ -54,13 +71,13 @@ public class ArrayListProductDaoImpl implements ProductDao {
 
     @Override
     public List<Product> findProducts(String textSearch) {
-        return findProductsAssistant.findProductsByDescription(getAll(), textSearch);
+        return finder.findProductsByDescription(getAll(), textSearch);
     }
 
     @Override
     public List<Product> findProducts(SortProperty sortProperty, SortMode sortMode) {
         List<Product> queryProducts = getAll();
-        findProductsAssistant.sortProducts(queryProducts, sortProperty, sortMode);
+        sorter.sort(queryProducts, sortProperty, sortMode);
 
         return queryProducts;
     }
@@ -68,30 +85,28 @@ public class ArrayListProductDaoImpl implements ProductDao {
     @Override
     public List<Product> findProducts(String textSearch, SortProperty sortProperty, SortMode sortMode) {
         List<Product> queryProducts = findProducts(textSearch);
-        findProductsAssistant.sortProducts(queryProducts, sortProperty, sortMode);
+        sorter.sort(queryProducts, sortProperty, sortMode);
 
         return queryProducts;
     }
 
     @Override
     public void save(Product savingProduct) {
-        if (!doesProductAlreadyExist(savingProduct)) {
-            populateId(savingProduct);
-            products.add(savingProduct);
-        } else {
+        if (doesProductAlreadyExist(savingProduct)) {
             throw new ProductAlreadyExistsException("Such product already exists");
         }
-    }
 
-    private boolean doesProductAlreadyExist(Product product) {
-        return products.stream().anyMatch(product::equals);
+        populateId(savingProduct);
+        products.add(savingProduct);
     }
 
     @Override
     public void delete(Long id) {
-        if (!products.removeIf(p -> p.getId().equals(id))) {
-            throw new IllegalArgumentException("Product not exists with such id = " + id);
-        }
+        products.removeIf(p -> p.getId().equals(id));
+    }
+
+    private boolean doesProductAlreadyExist(Product product) {
+        return products.stream().anyMatch(product::equals);
     }
 
     private void populateId(Product product) {

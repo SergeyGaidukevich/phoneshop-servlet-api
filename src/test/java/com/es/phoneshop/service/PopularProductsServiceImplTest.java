@@ -53,16 +53,13 @@ public class PopularProductsServiceImplTest {
 
         Map<Product, Integer> popularProductsMap = popularProducts.getPopularProducts();
 
-        int expectedSizePopularProductsMap = 5;
-        int resultSizePopularProductsMap = popularProductsMap.size();
-
         int numberViewedFirstProduct = popularProductsMap.get(products.get(0));
         int numberViewedSecondProduct = popularProductsMap.get(products.get(1));
         int numberViewedThirdProduct = popularProductsMap.get(products.get(2));
         int numberViewedFourthProduct = popularProductsMap.get(products.get(3));
         int numberViewedFifthProduct = popularProductsMap.get(products.get(4));
 
-        assertEquals(expectedSizePopularProductsMap, resultSizePopularProductsMap);
+        assertEquals(5, popularProductsMap.size());
         assertEquals(EXPECTED_ONE_VIEWED, numberViewedFirstProduct);
         assertEquals(EXPECTED_ONE_VIEWED, numberViewedSecondProduct);
         assertEquals(EXPECTED_ONE_VIEWED, numberViewedThirdProduct);
@@ -83,16 +80,13 @@ public class PopularProductsServiceImplTest {
 
         Map<Product, Integer> popularProductsMap = popularProducts.getPopularProducts();
 
-        int expectedSizePopularProductsMap = 5;
-        int resultSizePopularProductsMap = popularProductsMap.size();
-
         int numberViewedFirstProduct = popularProductsMap.get(products.get(0));
         int numberViewedSecondProduct = popularProductsMap.get(products.get(1));
         int numberViewedThirdProduct = popularProductsMap.get(products.get(2));
         int numberViewedFourthProduct = popularProductsMap.get(products.get(3));
         int numberViewedFifthProduct = popularProductsMap.get(products.get(4));
 
-        assertEquals(expectedSizePopularProductsMap, resultSizePopularProductsMap);
+        assertEquals(5, popularProductsMap.size());
         assertEquals(EXPECTED_ONE_VIEWED, numberViewedFirstProduct);
         assertEquals(EXPECTED_THREE_VIEWED, numberViewedSecondProduct);
         assertEquals(EXPECTED_ONE_VIEWED, numberViewedThirdProduct);
@@ -112,14 +106,11 @@ public class PopularProductsServiceImplTest {
 
         List<Product> mostPopularProducts = popularProductsService.getMostPopularProducts(popularProducts);
 
-        int expectedSizeMostPopularProducts = 3;
-        int resultSizeMostPopularProducts = mostPopularProducts.size();
-
         Product firstPopularProduct = mostPopularProducts.get(0);
         Product secondPopularProduct = mostPopularProducts.get(1);
         Product thirdPopularProduct = mostPopularProducts.get(2);
 
-        assertEquals(expectedSizeMostPopularProducts, resultSizeMostPopularProducts);
+        assertEquals(3, mostPopularProducts.size());
         assertEquals(products.get(1), firstPopularProduct);
         assertEquals(products.get(4), secondPopularProduct);
         assertEquals(products.get(3), thirdPopularProduct);

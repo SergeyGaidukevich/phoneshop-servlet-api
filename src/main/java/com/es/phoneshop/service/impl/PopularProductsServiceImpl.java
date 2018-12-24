@@ -4,7 +4,6 @@ import com.es.phoneshop.model.PopularProducts;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.service.PopularProductService;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,6 +13,7 @@ import java.util.stream.Collectors;
 public class PopularProductsServiceImpl implements PopularProductService {
 
     private static final int ONE_VIEW = 1;
+    private static final int MOST_POPULAR_PRODUCTS_SIZE = 3;
 
     private PopularProductsServiceImpl() {
     }
@@ -24,35 +24,23 @@ public class PopularProductsServiceImpl implements PopularProductService {
 
     @Override
     public List<Product> getMostPopularProducts(PopularProducts popularProducts) {
-        Map<Product, Integer> sortedPopularProducts = sortProductsMapByNumberViews(popularProducts.getPopularProducts());
-        List<Product> mostPopularProducts = new ArrayList<>();
-        int maxSizeMostPopularProductsList = 3;
-        int index = 0;
-
-        for (Product product : sortedPopularProducts.keySet()) {
-            if (maxSizeMostPopularProductsList > index) {
-                mostPopularProducts.add(product);
-                index++;
-            }
-        }
-
-        return mostPopularProducts;
+        return sortProductsMapByViewsCount(popularProducts.getPopularProducts())
+                .keySet()
+                .stream()
+                .limit(MOST_POPULAR_PRODUCTS_SIZE)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void increaseProductPopularity(PopularProducts popularProducts, Product viewedProduct) {
+    public void increaseProductPopularity(PopularProducts popularProducts, Product product) {
         Map<Product, Integer> products = popularProducts.getPopularProducts();
-
-        if (!popularProducts.getPopularProducts().containsKey(viewedProduct)) {
-            products.put(viewedProduct, ONE_VIEW);
-        } else {
-            int numberViews = products.get(viewedProduct) + ONE_VIEW;
-            products.put(viewedProduct, numberViews);
-        }
+        int viewsNumber = products.containsKey(product) ? products.get(product) + ONE_VIEW : ONE_VIEW;
+        products.put(product, viewsNumber);
     }
 
-    private Map<Product, Integer> sortProductsMapByNumberViews(Map<Product, Integer> products) {
-        return products.entrySet().stream()
+    private Map<Product, Integer> sortProductsMapByViewsCount(Map<Product, Integer> products) {
+        return products.entrySet()
+                .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));

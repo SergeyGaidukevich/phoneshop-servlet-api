@@ -8,5 +8,5 @@ import java.util.List;
 public interface PopularProductService {
     List<Product> getMostPopularProducts(PopularProducts popularProducts);
 
-    void increaseProductPopularity(PopularProducts popularProducts, Product viewedProduct);
+    void increaseProductPopularity(PopularProducts popularProducts, Product product);
 }

@@ -43,32 +43,17 @@ public class OrderServiceImplTest {
         List<CartItem> cartItems = new ArrayList<>();
         cartItems.add(new CartItem(product, quantity));
         cart.setCartItems(cartItems);
-        order = orderService.placeOrder(cart, "sss", "ppp", "qqq");
+        order = orderService.placeOrder(cart, "sss", "ppp", "+375(44)1234567");
 
-        int resultSizeStockProduct = product.getStock();
-        int expectedSizeStockProduct = 95;
-
-        int resultSizeCart = order.getCartItems().size();
-        int expectedSizeCart = 1;
-
-        String resultName = order.getName();
-        String expectedName = "sss";
-
-        String resultAddress = order.getDeliveryAddress();
-        String expectedAddress = "ppp";
-
-        String resultPhone = order.getPhone();
-        String expectedPhone = "qqq";
-
-        assertEquals(expectedSizeStockProduct, resultSizeStockProduct);
-        assertEquals(expectedSizeCart, resultSizeCart);
-        assertEquals(expectedName, resultName);
-        assertEquals(expectedAddress, resultAddress);
-        assertEquals(expectedPhone, resultPhone);
+        assertEquals(95, product.getStock());
+        assertEquals(1, order.getCartItems().size());
+        assertEquals("sss", order.getName());
+        assertEquals("ppp", order.getDeliveryAddress());
+        assertEquals("+375(44)1234567", order.getPhone());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void placeOrderIfParametersNotValid(){
+    public void placeOrderIfParametersNotValid() {
         int quantity = 5;
         List<CartItem> cartItems = new ArrayList<>();
         cartItems.add(new CartItem(new Product(), quantity));

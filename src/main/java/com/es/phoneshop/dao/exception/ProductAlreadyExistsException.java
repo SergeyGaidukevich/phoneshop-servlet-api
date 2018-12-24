@@ -1,6 +1,6 @@
 package com.es.phoneshop.dao.exception;
 
-public class ProductAlreadyExistsException extends ArrayListProductDaoException {
+public class ProductAlreadyExistsException extends DaoException {
     public ProductAlreadyExistsException() {
     }
 
