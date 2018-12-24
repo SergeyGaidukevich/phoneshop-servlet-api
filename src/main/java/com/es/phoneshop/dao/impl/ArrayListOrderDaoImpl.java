@@ -1,16 +1,15 @@
 package com.es.phoneshop.dao.impl;
 
 import com.es.phoneshop.dao.OrderDao;
+import com.es.phoneshop.dao.exception.OrderAlreadyExistsException;
+import com.es.phoneshop.dao.exception.OrderNotFoundException;
 import com.es.phoneshop.model.Order;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ArrayListOrderDaoImpl implements OrderDao {
-    private static final String NULL_ORDER_ID = "Null order id.";
-
     private final List<Order> orders = new CopyOnWriteArrayList<>();
     private final AtomicLong currentId = new AtomicLong(1);
 
@@ -18,38 +17,52 @@ public class ArrayListOrderDaoImpl implements OrderDao {
 
     }
 
+    public ArrayListOrderDaoImpl(List<Order> orders) {
+        this.orders.addAll(orders);
+        this.orders.forEach(this::populateId);
+    }
+
     public static ArrayListOrderDaoImpl getInstance() {
         return ArrayListOrderDaoImpl.InstanceHolder.instance;
     }
 
     @Override
-    public Order getProduct(Long id) {
+    public List<Order> getAll() {
+        return orders;
+    }
+
+    @Override
+    public Order get(Long id) {
         return orders.stream()
-                .filter(product -> product.getId().equals(id))
+                .filter(order -> order.getId().equals(id))
                 .findFirst()
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(() -> new OrderNotFoundException(String.format("Order with id = %d not found", id)));
     }
 
     @Override
     public void save(Order order) {
-        populateId(order);
-        Long id = order.getId();
-        if (productExist(id)) {
-            throw new IllegalArgumentException("Order with id" + id + "already exists.");
-        } else {
-            orders.add(order);
+        if (doesOrderExist(order)) {
+            throw new OrderAlreadyExistsException("Such order already exists.");
         }
+
+        populateId(order);
+        orders.add(order);
+    }
+
+    @Override
+    public void delete(Long id) {
+        orders.removeIf(p -> p.getId().equals(id));
     }
 
     private void populateId(Order order) {
         order.setId(currentId.getAndIncrement());
     }
 
-    private boolean productExist(Long id) {
-        return orders.stream().anyMatch(product -> product.getId().equals(id));
+    private boolean doesOrderExist(Order order) {
+        return orders.stream().anyMatch(order::equals);
     }
 
     private static class InstanceHolder {
-        static ArrayListOrderDaoImpl instance = new ArrayListOrderDaoImpl();
+        static final ArrayListOrderDaoImpl instance = new ArrayListOrderDaoImpl();
     }
 }

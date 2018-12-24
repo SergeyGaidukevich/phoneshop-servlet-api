@@ -8,12 +8,8 @@
     <h1>Your Cart:</h1>
     <form method="post" action="<c:url value="/checkout"/>">
         <button>Place order</button>
-        <br>
-        <c:if test="${not empty quantityErrors}">
-            <p class="error">Failed to update</p>
-        </c:if>
-        <c:if test="${not empty param.message}">
-            <p class="success">${param.message}</p>
+        <c:if test="${not empty requestScope.errorMessage}">
+            <p class="error">${requestScope.errorMessage}</p>
         </c:if>
         <table>
             <thead>
@@ -52,15 +48,18 @@
                 </c:if>
             </tr>
         </table>
-        <input name="name" placeholder="name">
+        <input name="name" placeholder="name"
+               value="${not empty paramValues['errorMessage'][0] ? "" : paramValues['name'][0]}">
         <br>
-        <input name="deliveryAddress" placeholder="delivery address">
+        <input name="deliveryAddress" placeholder="delivery address"
+               value="${not empty paramValues['errorMessage'][0] ? "" : paramValues['deliveryAddress'][0]}">
         <br>
-        <input name="phone" placeholder="phone">
+        <input name="phone" placeholder="phone"
+               value="${not empty paramValues['errorMessage'][0] ? "" : paramValues['phone'][0]}">
         <br>
-        <c:if test="${not empty errorMessage}">
-            <p class="error">${errorMessage}</p>
-        </c:if>
         <button>Place order</button>
+        <c:if test="${not empty requestScope.errorMessage}">
+            <p class="error">${requestScope.errorMessage}</p>
+        </c:if>
     </form>
 </tags:master>

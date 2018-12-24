@@ -1,7 +1,7 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.dao.ProductDao;
-import com.es.phoneshop.dao.exception.ArrayListProductDaoException;
+import com.es.phoneshop.dao.exception.DaoException;
 import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
 import com.es.phoneshop.model.Cart;
 import com.es.phoneshop.model.Product;
@@ -35,11 +35,12 @@ public class CartItemDeleteServlet extends HttpServlet {
         Cart cart = (Cart) session.getAttribute(CART);
         Long id = getProductId(request);
         try {
-            Product product = productDao.getProduct(id);
+            Product product = productDao.get(id);
             cartService.deleteCartItem(cart, product);
 
-            response.sendRedirect(request.getContextPath() + "/cart?message=Cart item " + product.getCode() + " removed successfully");
-        } catch (ArrayListProductDaoException e) {
+            response.sendRedirect(request.getContextPath()
+                    + String.format("/cart?message=Cart item %s removed successfully", product.getCode()));
+        } catch (DaoException e) {
             response.sendError(404, e.getMessage());
         }
     }

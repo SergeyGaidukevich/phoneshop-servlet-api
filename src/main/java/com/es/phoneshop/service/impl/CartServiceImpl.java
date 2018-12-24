@@ -6,10 +6,15 @@ import com.es.phoneshop.model.Product;
 import com.es.phoneshop.service.CartService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class CartServiceImpl implements CartService {
+
+    private static final String NOT_ENOUGH_QUANTITY_IN_STOCK = "Not enough quantity in stock";
+
     private CartServiceImpl() {
     }
 
@@ -18,20 +23,36 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public void addCartItemsToCart(Cart cart, List<CartItem> cartItems) {
+        List<CartItem> newCartItems = new ArrayList<>();
+        cartItems.forEach(item -> {
+            Optional<CartItem> oCartItem = findProductInCart(item.getProduct(), cart);
+            if (oCartItem.isPresent()) {
+                CartItem cartItem = oCartItem.get();
+                cartItem.setQuantity(cartItem.getQuantity() + item.getQuantity());
+            } else {
+                newCartItems.add(item);
+            }
+        });
+        cart.getCartItems().addAll(newCartItems);
+        calculateTotalPrice(cart);
+    }
+
+    @Override
     public void addProductToCart(Cart cart, Product product, int quantity) {
         int currentStock = product.getStock();
         if (currentStock < quantity) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(NOT_ENOUGH_QUANTITY_IN_STOCK);
         }
 
         Optional<CartItem> cartItemOptional = findProductInCart(product, cart);
         if (cartItemOptional.isPresent()) {
             CartItem cartItem = cartItemOptional.get();
             int orderedQuantity = cartItem.getQuantity() + quantity;
-            if (currentStock < orderedQuantity) {
-                throw new IllegalArgumentException();
-            } else {
+            if (currentStock >= orderedQuantity) {
                 cartItem.setQuantity(orderedQuantity);
+            } else {
+                throw new IllegalArgumentException(NOT_ENOUGH_QUANTITY_IN_STOCK);
             }
         } else {
             cart.getCartItems().add(new CartItem(product, quantity));
@@ -43,15 +64,15 @@ public class CartServiceImpl implements CartService {
     public void updateCart(Cart cart, Product product, int quantity) {
         int currentStock = product.getStock();
         if (currentStock < quantity) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(NOT_ENOUGH_QUANTITY_IN_STOCK);
         }
 
-        Optional<CartItem> cartItemOptional = findProductInCart(product, cart);
-        if (cartItemOptional.isPresent()) {
-            CartItem cartItem = cartItemOptional.get();
+        Optional<CartItem> oCartItem = findProductInCart(product, cart);
+        if (oCartItem.isPresent()) {
+            CartItem cartItem = oCartItem.get();
             cartItem.setQuantity(quantity);
         } else {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException(product.getCode());
         }
         calculateTotalPrice(cart);
     }
@@ -83,6 +104,6 @@ public class CartServiceImpl implements CartService {
     }
 
     private static class InstanceHolder {
-        static CartServiceImpl instance = new CartServiceImpl();
+        static final CartServiceImpl instance = new CartServiceImpl();
     }
 }

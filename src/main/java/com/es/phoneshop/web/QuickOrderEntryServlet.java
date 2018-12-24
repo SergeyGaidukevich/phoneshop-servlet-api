@@ -7,6 +7,7 @@ import com.es.phoneshop.model.Cart;
 import com.es.phoneshop.model.Product;
 import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.impl.CartServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import javax.servlet.ServletException;
@@ -19,14 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class CartPageServlet extends HttpServlet {
-    private static final String CART_JSP = "/WEB-INF/pages/cart.jsp";
-    private static final String QUANTITY_ERRORS = "quantityErrors";
+public class QuickOrderEntryServlet extends HttpServlet {
+    private static final String QUICK_ORDER_ENTRY_JSP = "/WEB-INF/pages/quickOrderEntry.jsp";
     private static final String CART = "cart";
+    private static final String CODE = "code";
     private static final String QUANTITY = "quantity";
-    private static final String PRODUCT_ID = "productId";
     private static final String NOT_A_NUMBER = "Not a number";
     private static final String MESSAGE_CART_UPDATE_SUCCESSFULLY = "?message=cart update successfully";
+    private static final String QUANTITY_ERRORS = "quantityErrors";
+    private static final String CODE_ERRORS = "codeErrors";
     private static final String RELOAD_PAGE = "Product with code = %s no found in Cart, reload page!";
 
     private ProductDao productDao;
@@ -42,48 +44,43 @@ public class CartPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Cart cart = (Cart) session.getAttribute(CART);
-
-        if (cart == null) {
-            cart = new Cart();
-            session.setAttribute(CART, cart);
-        }
-
-        request.getRequestDispatcher(CART_JSP).forward(request, response);
+        request.getRequestDispatcher(QUICK_ORDER_ENTRY_JSP).forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String[] quantities = request.getParameterValues(QUANTITY);
-        String[] productIds = request.getParameterValues(PRODUCT_ID);
-        Map<Long, String> quantityErrors = new HashMap<>();
+        String[] codes = request.getParameterValues(CODE);
+        Map<Integer, String> quantityErrors = new HashMap<>();
+        Map<Integer, String> codeErrors = new HashMap<>();
+        Cart quickCart = new Cart();
 
-        for (int i = 0; i < productIds.length; i++) {
-            Long productId = Long.valueOf(productIds[i]);
+        for (int i = 0; i < codes.length; i++) {
+            String code = codes[i];
             if (NumberUtils.isNumber(quantities[i])) {
                 try {
-                    Product product = productDao.get(productId);
+                    Product product = productDao.get(code);
                     int quantity = Integer.parseUnsignedInt(quantities[i]);
-
-                    cartService.updateCart(getCart(request), product, quantity);
+                    cartService.addProductToCart(quickCart, product, quantity);
                 } catch (DaoException e) {
-                    response.sendError(404, e.getMessage());
+                    codeErrors.put(i, e.getMessage());
                 } catch (IllegalArgumentException e) {
-                    quantityErrors.put(productId, e.getMessage());
+                    quantityErrors.put(i, e.getMessage());
                 } catch (NoSuchElementException e) {
-                    quantityErrors.put(productId, String.format(RELOAD_PAGE, e.getMessage()));
+                    codeErrors.put(i, String.format(RELOAD_PAGE, e.getMessage()));
                 }
-            } else {
-                quantityErrors.put(productId, NOT_A_NUMBER);
+            } else if (StringUtils.isNotBlank(code)) {
+                quantityErrors.put(i, NOT_A_NUMBER);
             }
         }
 
-        if (quantityErrors.isEmpty()) {
+        if (quantityErrors.isEmpty() && codeErrors.isEmpty()) {
+            cartService.addCartItemsToCart(getCart(request), quickCart.getCartItems());
             response.sendRedirect(request.getRequestURI() + MESSAGE_CART_UPDATE_SUCCESSFULLY);
         } else {
             request.setAttribute(QUANTITY_ERRORS, quantityErrors);
-            request.getRequestDispatcher(CART_JSP).forward(request, response);
+            request.setAttribute(CODE_ERRORS, codeErrors);
+            request.getRequestDispatcher(QUICK_ORDER_ENTRY_JSP).forward(request, response);
         }
     }
 

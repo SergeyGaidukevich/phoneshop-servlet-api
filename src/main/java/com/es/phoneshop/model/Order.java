@@ -57,8 +57,7 @@ public class Order extends Cart {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return Objects.equals(id, order.id) &&
-                Objects.equals(name, order.name) &&
+        return Objects.equals(name, order.name) &&
                 Objects.equals(deliveryAddress, order.deliveryAddress) &&
                 Objects.equals(phone, order.phone) &&
                 Objects.equals(totalPrice, order.totalPrice);

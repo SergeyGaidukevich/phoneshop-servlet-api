@@ -1,10 +1,12 @@
 package com.es.phoneshop.dao;
 
+import com.es.phoneshop.dao.exception.DaoException;
 import com.es.phoneshop.dao.impl.ArrayListProductDaoImpl;
-import com.es.phoneshop.dao.sortParameters.SortMode;
-import com.es.phoneshop.dao.sortParameters.SortProperty;
-import com.es.phoneshop.dao.exception.ArrayListProductDaoException;
+import com.es.phoneshop.finder.impl.ProductFinderImpl;
 import com.es.phoneshop.model.Product;
+import com.es.phoneshop.sorter.SortMode;
+import com.es.phoneshop.sorter.SortProperty;
+import com.es.phoneshop.sorter.impl.ProductSorterImpl;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -29,10 +31,13 @@ public class ArrayListProductDaoImplTest {
 
     private ProductDao productDao;
 
+    private static ProductSorterImpl sorter = new ProductSorterImpl();
+    private static ProductFinderImpl finder = new ProductFinderImpl();
+
     @Test
     public void testGetAllWhenProductsAreValid() {
         List<Product> products = Collections.nCopies(2, createProduct());
-        productDao = new ArrayListProductDaoImpl(products);
+        productDao = new ArrayListProductDaoImpl(products, sorter, finder);
 
         List<Product> result = productDao.getAll();
 
@@ -44,7 +49,7 @@ public class ArrayListProductDaoImplTest {
     @Test
     public void testGetAllWhenProductContainsNullPrice() {
         List<Product> products = Collections.singletonList(createProductWithNullPrice());
-        productDao = new ArrayListProductDaoImpl(products);
+        productDao = new ArrayListProductDaoImpl(products, sorter, finder);
 
         List<Product> result = productDao.getAll();
 
@@ -55,7 +60,7 @@ public class ArrayListProductDaoImplTest {
     @Test
     public void testGetAllWhenProductContainsNotPositiveStock() {
         List<Product> products = Collections.singletonList(createProductWithNotPositiveStock());
-        productDao = new ArrayListProductDaoImpl(products);
+        productDao = new ArrayListProductDaoImpl(products, sorter, finder);
 
         List<Product> result = productDao.getAll();
 
@@ -69,7 +74,7 @@ public class ArrayListProductDaoImplTest {
         Collections.addAll(expected, createProductWithAnotherDescription(), createProduct());
         List<Product> products = new ArrayList<>();
         Collections.addAll(products, createProduct(), createProductWithAnotherDescription());
-        productDao = new ArrayListProductDaoImpl(products);
+        productDao = new ArrayListProductDaoImpl(products, sorter, finder);
 
         List<Product> result = productDao.findProducts(DESCRIPTION_SAMSUNG_GALAXY);
 
@@ -84,7 +89,7 @@ public class ArrayListProductDaoImplTest {
         Collections.addAll(expected, createProductWithAnotherPrice(), createProduct());
         List<Product> products = new ArrayList<>();
         Collections.addAll(products, createProduct(), createProductWithAnotherPrice());
-        productDao = new ArrayListProductDaoImpl(products);
+        productDao = new ArrayListProductDaoImpl(products, sorter, finder);
 
         List<Product> result = productDao.findProducts(SortProperty.PRICE, SortMode.DESCENDING);
 
@@ -99,36 +104,48 @@ public class ArrayListProductDaoImplTest {
         expected.setId(2L);
         List<Product> products = new ArrayList<>();
         Collections.addAll(products, createProductWithAnotherPrice(), createProduct());
-        productDao = new ArrayListProductDaoImpl(products);
+        productDao = new ArrayListProductDaoImpl(products, sorter, finder);
 
-        Product result = productDao.getProduct(2L);
+        Product result = productDao.get(2L);
 
         assertNotNull(result);
         assertEquals(expected, result);
     }
 
-    @Test(expected = ArrayListProductDaoException.class)
+    @Test(expected = DaoException.class)
     public void testGetProductWithNotExistingProduct() {
         List<Product> products = Collections.nCopies(2, createProduct());
-        productDao = new ArrayListProductDaoImpl(products);
+        productDao = new ArrayListProductDaoImpl(products, sorter, finder);
 
-        productDao.getProduct(7L);
+        productDao.get(7L);
     }
 
     @Test
     public void testSaveProductIfIsNotThereAlreadyProductInDao() {
         List<Product> products = new ArrayList<>();
         products.add(createProductWithAnotherPrice());
-        productDao = new ArrayListProductDaoImpl(products);
+        productDao = new ArrayListProductDaoImpl(products, sorter, finder);
         Product expected = createProduct();
         expected.setId(2L);
 
         Product product = createProduct();
         productDao.save(product);
-        Product result = productDao.getProduct(2L);
+        Product result = productDao.get(2L);
 
-        assertNotNull(productDao);
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void deleteTest() {
+        Product product = createProduct();
+        List<Product> products = new ArrayList<>();
+        products.add(product);
+        productDao = new ArrayListProductDaoImpl(products, sorter, finder);
+
+        long id = 1L;
+        productDao.delete(id);
+
+        assertTrue(productDao.getAll().isEmpty());
     }
 
     private void assertProduct(Product product) {

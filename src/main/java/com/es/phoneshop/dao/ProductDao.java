@@ -1,13 +1,15 @@
 package com.es.phoneshop.dao;
 
-import com.es.phoneshop.dao.sortParameters.SortMode;
-import com.es.phoneshop.dao.sortParameters.SortProperty;
 import com.es.phoneshop.model.Product;
+import com.es.phoneshop.sorter.SortMode;
+import com.es.phoneshop.sorter.SortProperty;
 
 import java.util.List;
 
 public interface ProductDao {
-    Product getProduct(Long id);
+    Product get(Long id);
+
+    Product get(String code);
 
     List<Product> getAll();
 
